@@ -1,0 +1,275 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-dark d-inline-block mb-0">Nomenclador de Factores de Riesgos</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Factores de Riesgos</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <div class="col-lg-12 col-12 text-right">
+                            <button class="btn btn-sm text-white"  style="background-color: #1b1e21" id="addNuevoFactor" type="button"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Agregar una nuevo empleo">Nuevo
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="dataFactores">
+                            <thead style="background: #d93f4f;color: white">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+                            {% if factoresRiesgos %}
+                                {% for factor in factoresRiesgos %}
+                                    <tr data-id="{{ factor.id }}">
+                                        <td>{{ factor.nombre }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-info btn-icon-only rounded-circle editFactor"
+                                                    type="button" data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="Modificar">
+                                        <span class="btn-inner--icon"><i
+                                                    class="fas fa-edit"></i></span>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger btn-icon-only rounded-circle borrarFactor"
+                                                    type="button" data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="Eliminar">
+                                                                                 <span class="btn-inner--icon"><i
+                                                                                             class="fas fa-trash"></i></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{ include('Nomencladores/FactoresRiesgos/modalAddFactorRiesgo.html.twig') }}
+            {{ include('Nomencladores/FactoresRiesgos/modalEditFactorRiesgo.html.twig') }}
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            //Declaraciones
+            $('#dataFactores').DataTable({
+                "lengthChange": false,
+                "lengthMenu": [[10], [10]]
+            });
+
+            $('#addNuevoFactor').on('click', function () {
+                $('#modalAddFactorRiesgo').modal('show');
+            });
+
+            $('#btnAddGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#addNombre").val() === '') {
+                    alertify.alert('<strong>El factor de riesgo es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalAddFactorRiesgo').modal('hide');
+
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    nombre: $("#addNombre").val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("insertFactorRiesgo") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+
+                    if (data === 'ok') {
+                        alertify.alert('<strong>El factor de riesgo ha sido insertado correctamente.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                $('#modalAddFactorRiesgo input').each(function () {
+                                    $(this).val('');
+                                });
+                                window.location.href = "{{ path('gestionarFactoresRiesgos') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            let idFactor = '';
+            let nombre = '';
+
+            $('#dataFactores tbody').on('click', '.editFactor', function () {
+
+                let row = $(this).parents('tr');
+                idFactor = row.data('id');
+
+                {% if factoresRiesgos %}
+                    {% for factor in factoresRiesgos %}
+                    var id = parseInt('{{ factor.id }}');
+                    if (id === idFactor) {
+                        $('#editNombre').val('{{ factor.nombre }}');
+                        nombre = '{{ factor.nombre }}';
+                    }
+                    {% endfor %}
+                {% endif %}
+                $('#modalEditFactorRiesgo').modal('show');
+            });
+
+            $('#btnEditGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#editNombre").val() === '') {
+                    alertify.alert('<strong>El factor de riesgo es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalEditFactorRiesgo').modal('hide');
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    id: idFactor,
+                    nombre: $('#editNombre').val()
+                };
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("updateFactorRiesgo") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if (data === 'ok') {
+                        alertify.alert('<strong>El factor de riesgo ha sido modificado correctamente</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                window.location.href = "{{ path('gestionarFactoresRiesgos') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            $('#dataFactores tbody').on('click', '.borrarFactor', function () {
+
+                let row = $(this).parents('tr');
+
+                let mat_datos = {id: row.data('id')};
+
+                alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea eliminar el factor de riesgo seleccionado?</strong>')
+                    .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                    .set('onok', function () {
+
+                        $(".preload").removeClass('hidden');
+
+                        $.ajax({
+                            type: "POST",
+                            dataType: "html",
+                            url: '{{ path("deleteFactorRiesgo") }}',
+                            data: mat_datos
+                        }).done(function (data) {
+
+                            $(".preload").addClass('hidden');
+                            if (data === 'ok') {
+                                alertify.alert('<strong>El factor de riesgo seleccionado ha sido eliminado correctamente</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                                    .set('onok', function () {
+                                        row.fadeOut();
+                                    });
+                            } else {
+                                alertify.alert('<strong>' + data + '</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                            }
+                        });
+                    });
+            });
+
+        });
+
+    </script>
+{% endblock %}
+

@@ -1,0 +1,351 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-dark d-inline-block mb-0">Nomenclador de Municipios</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Municipios</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <div class="col-lg-12 col-12 text-right">
+                            <button class="btn btn-sm text-white"  style="background-color: #1b1e21" id="addNuevoMunicipio" type="button"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Agregar un nuevo municipio">Nuevo
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="dataMunicipios">
+                            <thead style="background: #d93f4f;color: white">
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Provincia</th>
+                                <th scope="col" class="text-center">Código</th>
+                                <th scope="col">Municipio</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por provincia" id="buscador_provincia"
+                                               name="buscador_provincia">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por código" id="buscador_codigo"
+                                               name="buscador_codigo">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar municipio" id="buscador_municipio"
+                                               name="buscador_municipio">
+                                    </div>
+                                </th>
+                                <th></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{ include('Nomencladores/Municipios/modalAddMunicipio.html.twig') }}
+            {{ include('Nomencladores/Municipios/modalEditMunicipio.html.twig') }}
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            //Declaraciones
+
+            var table = $('#dataMunicipios').DataTable({
+                dom: 'B<"float-left"i><"float-right"f>t<"float-left"l><"float-right"p><"clearfix">',
+                responsive: false,
+                order: [[ 0, "desc" ]],
+                processing: true,
+                serverSide: true,
+                ajax: "dataTableMunicipiosAjax",
+                columnDefs: [
+                    { "name": "id", "targets": 0 , "visible": false},
+                    { "name": "provincia", "targets": 1 },
+                    { "name": "codigo", "targets": 2 },
+                    { "name": "municipio", "targets": 3 },
+                    { "className": "dt-center", "targets": [ 2 ] },
+                ],
+                "initComplete": function () {
+                    this.api().columns().every( function () {
+                        var that = this;
+
+                        $( 'input', this.footer() ).on( 'keyup change', function () {
+                            if ( that.search() !== this.value ) {
+                                that
+                                    .search( this.value )
+                                    .draw();
+                            }
+                        });
+                    })
+                },
+                searchDelay: 1000,
+                "lengthMenu": [[8], [8]]
+            });
+
+            $('#addNuevoMunicipio').on('click', function () {
+                $('#modalAddMunicipio').modal('show');
+            });
+
+            $('#btnAddGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#addProvincia").val() === '0') {
+                    alertify.alert('<strong>La provincia es obligatoria, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+                if ($("#addCodigo").val() === '') {
+                    alertify.alert('<strong>El código es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+                if ($("#addNombre").val() === '') {
+                    alertify.alert('<strong>El municipio es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalAddMunicipio').modal('hide');
+
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    idProvincia: $("#addProvincia").val(),
+                    codigo: $("#addCodigo").val(),
+                    nombre: $("#addNombre").val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("insertMunicipio") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+
+                    if (data === 'ok') {
+
+                        alertify.alert('<strong>El municipio ha sido insertado correctamente.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                $('#modalAddMunicipio input').each(function () {
+                                    $(this).val('');
+                                });
+                                $("#addProvincia").val(0);
+                                window.location.href = "{{ path('gestionarMunicipios') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            let idMunicipio = '';
+            let nombre = '';
+
+            $('#dataMunicipios tbody').on('click', '.editMunicipio', function () {
+
+                let data = table.row($(this).parents('tr')).data();
+                idMunicipio = parseInt(data[0]);
+
+                {% if municipios %}
+                    {% for municipio in municipios %}
+                    var id = parseInt('{{ municipio.id }}');
+                    if (id === idMunicipio) {
+                        $('#editProvincia').val('{{ municipio.provincia.id }}');
+                        $('#editCodigo').val('{{ municipio.codigo }}');
+                        $('#editNombre').val('{{ municipio.nombre }}');
+                        nombre = '{{ municipio.nombre }}';
+                    }
+                    {% endfor %}
+                {% endif %}
+                $('#modalEditMunicipio').modal('show');
+            });
+
+            $('#btnEditGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#editProvincia").val() === '0') {
+                    alertify.alert('<strong>La provincia es obligatoria, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+                if ($("#editCodigo").val() === '') {
+                    alertify.alert('<strong>El código es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+                if ($("#editNombre").val() === '') {
+                    alertify.alert('<strong>La pregunta es obligatoria, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalEditMunicipio').modal('hide');
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    id: idMunicipio,
+                    idProvincia: $('#editProvincia').val(),
+                    codigo: $("#editCodigo").val(),
+                    nombre: $('#editNombre').val()
+                };
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("updateMunicipio") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if (data === 'ok') {
+
+                        alertify.alert('<strong>El municipio ha sido modificado correctamente</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                window.location.href = "{{ path('gestionarMunicipios') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            $('#dataMunicipios tbody').on('click', '.borrarMunicipio', function () {
+
+                let data = table.row($(this).parents('tr')).data();
+                idMunicipio = parseInt(data[0]);
+
+                let mat_datos = {id: idMunicipio};
+
+                alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea eliminar el municipio seleccionado?</strong>')
+                    .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                    .set('onok', function () {
+
+                        $(".preload").removeClass('hidden');
+
+                        $.ajax({
+                            type: "POST",
+                            dataType: "html",
+                            url: '{{ path("deleteMunicipio") }}',
+                            data: mat_datos
+                        }).done(function (data) {
+
+                            $(".preload").addClass('hidden');
+                            if (data === 'ok') {
+
+                                alertify.alert('<strong>El municipio seleccionado ha sido eliminado correctamente</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                                    .set('onok', function () {
+                                        window.location.href = "{{ path('gestionarMunicipios') }}";
+                                    });
+                            } else {
+                                alertify.alert('<strong>' + data + '</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                            }
+                        });
+                    });
+            });
+
+        });
+
+    </script>
+{% endblock %}
+

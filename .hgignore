@@ -1,0 +1,19 @@
+syntax: glob
+app/config/parameters.yml
+var/cache*
+var/sessions*
+.idea*
+*.old
+*.db
+*.rej
+*.diff
+*.zip
+*.idea
+*.log
+*.exe
+*.txt
+*.bat
+*.sql
+*.xls
+*.xlsx
+*~

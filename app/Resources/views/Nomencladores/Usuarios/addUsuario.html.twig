@@ -1,0 +1,280 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/plugins/multiselect/css/multi-select.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card card-user">
+                    <div class="card-header">
+                        <h2 class="card-title text-dark font-weight-bold mb-4">Nuevo Usuario</h2>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="card-body" style="background: #fdfdfd">
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="username">Usuario</label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Teclee el usuario" id="username"
+                                                           name="username">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="nombre">Nombre</label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Teclee el nombre" id="nombre"
+                                                           name="nombre" onkeypress="return soloLetras(event)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="primerApellido">Primer Apellido</label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Teclee el nombre" id="primerApellido"
+                                                           name="primerApellido" onkeypress="return soloLetras(event)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="segundoApellido">Segundo Apellido</label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Teclee el nombre" id="segundoApellido"
+                                                           name="segundoApellido" onkeypress="return soloLetras(event)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="profesion">Profesión</label>
+                                                    <select
+                                                            class="form-control" id="profesion"
+                                                            name="profesion">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for profesion in  profesiones %}
+                                                            <option value="{{ profesion.id }}">{{ profesion.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="nivelAcceso">Nivel de Acceso</label>
+                                                    <select
+                                                            class="form-control" id="nivelAcceso"
+                                                            name="nivelAcceso">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for nivel in  nivelAccesos %}
+                                                            <option value="{{ nivel.id }}">{{ nivel.nivel }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-12 pr-1">
+                                                <div class="form-group">
+                                                    <label class="control-label "
+                                                           for="multi-roles"><strong>Seleccione
+                                                            los roles:</strong></label>
+                                                    <select multiple="multiple" id="multi-roles"
+                                                            name="multi-roles"
+                                                            class="form-control">
+                                                        {% for role in roles %}
+                                                            {% if not (role.nombre == 'ROLE_SUPERUSUARIO') %}
+                                                                <option value={{ role.id }}>{{ role.nombre }}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="update ml-auto mr-auto">
+                                        <button type="button" class="btn btn-round text-white" style="background-color: #303132" id="btnGuardar"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Guardar el proyecto">Aceptar
+                                        </button>
+                                        <button type="button" class="btn btn-link btn-round text-dark" id="btnCancelar"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Salir">Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/plugins/multiselect/js/jquery.multi-select.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            var supervisor = 0;
+
+            $('#multi-roles').multiSelect({
+                afterSelect: function (values) {
+                    if (values == 4) {
+                        supervisor = 1;
+                    }
+                },
+                afterDeselect: function (values) {
+                    if (values == 4) {
+                        supervisor = 0;
+                    }
+                }
+            });
+
+            //--------- abandonar el formulario -----------------
+            $('#btnCancelar').on('click', function ()
+            {
+                window.location.href = "{{ path('gestionarUsuarios') }}";
+            });
+
+            $('#btnGuardar').on('click',function () {
+
+                if ($("#username").val() === '') {
+                    alertify.alert('<strong>El usuario es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#nombre").val() === '') {
+                    alertify.alert('<strong>El nombre es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#primerApellido").val() === '') {
+                    alertify.alert('<strong>El primer apellido es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#segundoApellido").val() === '') {
+                    alertify.alert('<strong>El segundo apellido es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#profesion").val() === '0') {
+                    alertify.alert('<strong>La profesión es obligatoria, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#nivelAcceso").val() === '0') {
+                    alertify.alert('<strong>El nivel de acceso es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if(!($('#ms-multi-roles li.ms-elem-selectable ').hasClass('ms-selected')))
+                {
+                    alertify.alert('<strong>Debe  seleccionar al menos un rol para el usuario.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label','Aceptar');
+                    return false;
+                }
+
+                $(".preload").removeClass('hidden');
+
+                var mat_datos = {
+                    username: $("#username").val(),
+                    nombre: $("#nombre").val(),
+                    primerApellido: $("#primerApellido").val(),
+                    segundoApellido: $("#segundoApellido").val(),
+                    profesion: $("#profesion").val(),
+                    nivelAcceso: $("#nivelAcceso").val(),
+                    roles: $("#multi-roles").val(),
+                    supervisor: supervisor
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("insertUsuario") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if(data == 'ok'){
+
+                        alertify.alert('<strong>El usuario ha sido insertado correctamente</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label','Aceptar')
+                            .set('onok', function () {
+                                window.location.href = "{{ path('gestionarUsuarios') }}";
+                            });
+                    }else{
+                        alertify.alert('<strong>'+ data +'</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label','Aceptar')
+                    }
+                });
+
+            });
+
+        });
+    </script>
+{% endblock %}
+

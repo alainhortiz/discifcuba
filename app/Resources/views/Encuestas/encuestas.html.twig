@@ -1,0 +1,351 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Encuestas</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Encuestas</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    {% if is_granted("ROLE_ENTREVISTADOR") or is_granted("ROLE_SUPERUSUARIO") %}
+                        <div class="col-lg-6 col-5 text-right">
+                            <a href="{{ path('formImportarEncuesta') }}" class="btn btn-sm btn-neutral text-dark">Importar encuestas</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <h3 class="mb-0">Encuestas</h3>
+                        {% if is_granted("ROLE_ENTREVISTADOR") or is_granted("ROLE_SUPERUSUARIO") %}
+                            <div class="col-lg-12 col-12 text-right">
+                                <button class="btn btn-sm text-white" style="background-color: #1b1e21"
+                                        id="addNuevaEncuesta" type="button"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Agregar una nueva encuesta">Nueva encuesta
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="dataEncuestas">
+                            <thead style="background: #d93f4f;color: white">
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Provincia</th>
+                                <th scope="col">Municipio</th>
+                                <th scope="col" class="text-center">fecha</th>
+                                <th scope="col" class="text-center">Carné de Identidad</th>
+                                <th scope="col">Nombres y Apellidos</th>
+                                <th scope="col">Entrevistador</th>
+                                <th scope="col">Aprobación</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por provincia" id="buscador_provincia"
+                                               name="buscador_provincia">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por municipio" id="buscador_municipio"
+                                               name="buscador_municipio">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por fecha" id="buscador_fecha"
+                                               name="buscador_fecha">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control "
+                                               placeholder="Buscar por carné" id="buscador_carne"
+                                               name="buscador_carne">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control "
+                                               placeholder="Buscar por nombre" id="buscador_nombre"
+                                               name="buscador_nombre">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control "
+                                               placeholder="Buscar por usuario" id="buscador_entrevistador"
+                                               name="buscador_entrevistador">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control "
+                                               placeholder="Buscar por supervisor" id="buscador_supervisor"
+                                               name="buscador_supervisor">
+                                    </div>
+                                </th>
+                                <th></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{ include('Encuestas/modalBuscarPersona.html.twig') }}
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            //Roles y permisos de la page
+            {
+                (function () {
+                    {% if not (app.user.isActive) %}
+                    window.location.href = "{{ path('login') }}";
+                    {% endif %}
+                })();
+            }
+
+            //Declaraciones
+            {
+                var idEncuesta = '';
+
+                var table = $('#dataEncuestas').DataTable({
+                    dom: 'B<"float-left"i><"float-right"f>t<"float-left"l><"float-right"p><"clearfix">',
+                    responsive: false,
+                    order: [[0, "desc"]],
+                    processing: true,
+                    serverSide: true,
+                    ajax: "dataTableEncuestasAjax",
+                    columnDefs: [
+                        {"name": "id", "targets": 0, "visible": false},
+                        {"name": "provincia", "targets": 1},
+                        {"name": "municipio", "targets": 2},
+                        {"name": "fecha", "targets": 3},
+                        {"name": "carne", "targets": 4},
+                        {"name": "nombreCompleto", "targets": 5},
+                        {"name": "entrevistador", "targets": 6},
+                        {"name": "supervisor", "targets": 7},
+                        {"className": "dt-center", "targets": [3, 4]},
+                        {"targets": "_all", "sortable": false}
+                    ],
+                    "initComplete": function () {
+                        this.api().columns().every(function () {
+                            var that = this;
+
+                            $('input', this.footer()).on('keyup change', function () {
+                                if (that.search() !== this.value) {
+                                    that
+                                        .search(this.value)
+                                        .draw();
+                                }
+                            });
+                        })
+                    },
+                    searchDelay: 1000,
+                    "lengthMenu": [[8], [8]]
+                });
+            }
+
+            //Localizar persona
+            {
+                $('#addNuevaEncuesta').on('click', function () {
+                    $('#carnetPersona').val('');
+                    $('#modalBuscarPersona').modal('show');
+                });
+
+                $('#carnetPersona').on("keyup", function () {
+
+                    if ($('#carnetPersona').val().trim().length === 11) {
+                        $('#btnBuscarPersona').prop("disabled", false);
+                    } else {
+                        $('#btnBuscarPersona').prop("disabled", true);
+                    }
+                });
+
+                //Patrón de expresión regular para validar el carne de identidad
+                let reg = new RegExp(/(\d\d)(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])\d\d\d\d\d/);
+
+                $('#btnBuscarPersona').on('click', function () {
+                    if (reg.test($('#carnetPersona').val())) {
+                        var enlace = "{{ path('localizarPersona', {ci:'id'}) }}";
+                        var ruta = enlace.replace('id', $('#carnetPersona').val());
+                        window.location.href = ruta;
+                    } else {
+                        alertify.alert('<strong>Teclee un no. de carné de identidad válido.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                            .set('label', 'Aceptar');
+                        return false;
+                    }
+                });
+            }
+
+            //Acciones de persistencia
+            {
+                $('#dataEncuestas tbody').on('click', '.verEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    var enlace = "{{ path('verEncuesta', {idEncuesta:'id'}) }}";
+                    var ruta = enlace.replace('id', idEncuesta);
+                    window.location.href = ruta;
+                });
+
+                $('#dataEncuestas tbody').on('click', '.editEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    var enlace = "{{ path('editEncuesta', {idEncuesta:'id'}) }}";
+                    var ruta = enlace.replace('id', idEncuesta);
+                    window.location.href = ruta;
+                });
+
+                $('#dataEncuestas tbody').on('click', '.aprobarEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    let mat_datos = {id: idEncuesta};
+
+                    alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea aprobar la encuesta seleccionada?</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('onok', function () {
+
+                            $(".preload").removeClass('hidden');
+
+                            $.ajax({
+                                type: "POST",
+                                dataType: "html",
+                                url: '{{ path("aprobarEncuesta") }}',
+                                data: mat_datos
+                            }).done(function (data) {
+
+                                $(".preload").addClass('hidden');
+                                if (data === 'ok') {
+
+                                    alertify.alert('<strong>La encuesta seleccionada ha sido aprobada correctamente</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                        .set('onok', function () {
+                                            window.location.href = "{{ path('gestionarEncuestas') }}";
+                                        });
+                                } else {
+                                    alertify.alert('<strong>' + data + '</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                }
+                            });
+                        });
+                });
+
+                $('#dataEncuestas tbody').on('click', '.borrarEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    let mat_datos = {id: idEncuesta};
+
+                    alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea eliminar la encuesta seleccionada?</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('onok', function () {
+
+                            $(".preload").removeClass('hidden');
+
+                            $.ajax({
+                                type: "POST",
+                                dataType: "html",
+                                url: '{{ path("deleteEncuesta") }}',
+                                data: mat_datos
+                            }).done(function (data) {
+
+                                $(".preload").addClass('hidden');
+                                if (data === 'ok') {
+
+                                    alertify.alert('<strong>La encuesta seleccionada ha sido eliminada correctamente</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                        .set('onok', function () {
+                                            window.location.href = "{{ path('gestionarEncuestas') }}";
+                                        });
+                                } else {
+                                    alertify.alert('<strong>' + data + '</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                }
+                            });
+                        });
+                });
+            }
+
+
+        });
+
+    </script>
+{% endblock %}
+

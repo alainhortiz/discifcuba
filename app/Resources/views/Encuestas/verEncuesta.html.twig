@@ -1,0 +1,1077 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/plugins/multiselect/css/multi-select.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                        <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('gestionarEncuestas') }}">Encuestas</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Encuesta CI: {{ encuesta.persona.carnetIdentidad ~ ' - ' ~ encuesta.persona.nombreCompleto() }} </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card card-user">
+                    <div class="card-header">
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <!-- Tabs with icons -->
+                                    <div class="nav-wrapper">
+                                        <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text"
+                                            role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-1" role="tab"
+                                                   aria-controls="tabs-icons-text-1" aria-selected="true"><i
+                                                            class="ni ni-single-02 mr-2"></i>Datos Generales</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-2" role="tab"
+                                                   aria-controls="tabs-icons-text-2" aria-selected="false"><i
+                                                            class="ni ni-single-02 mr-2"></i>Diagnóstico</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-3" role="tab"
+                                                   aria-controls="tabs-icons-text-3" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D1</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-4" role="tab"
+                                                   aria-controls="tabs-icons-text-4" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D2</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-5-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-5" role="tab"
+                                                   aria-controls="tabs-icons-text-5" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D3</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-6-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-6" role="tab"
+                                                   aria-controls="tabs-icons-text-6" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D4</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-7-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-7" role="tab"
+                                                   aria-controls="tabs-icons-text-7" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D5</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-8-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-8" role="tab"
+                                                   aria-controls="tabs-icons-text-8" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D6</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-9-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-9" role="tab"
+                                                   aria-controls="tabs-icons-text-9" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D7</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-10-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-10" role="tab"
+                                                   aria-controls="tabs-icons-text-10" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D8</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-11-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-11" role="tab"
+                                                   aria-controls="tabs-icons-text-11" aria-selected="false"><i
+                                                            class="fa fa-question mr-2"></i>D9</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-11-tab"
+                                                   data-toggle="tab" href="#tabs-icons-text-12" role="tab"
+                                                   aria-controls="tabs-icons-text-12" aria-selected="false"><i
+                                                            class="fa fa-users mr-2"></i>Entrevistadores</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card shadow">
+                                        <div class="card-body" style="background: #FFFFFF">
+                                            <div class="tab-content" id="myTabContent">
+                                                {#        Datos generales #}
+                                                <div class="tab-pane fade show active" id="tabs-icons-text-1"
+                                                     role="tabpanel" aria-labelledby="tabs-icons-text-1-tab" disabled>
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-12">
+                                                                    <div class="form-group">
+                                                                        <h2 class="card-title text-dark font-weight-bold mb-4">
+                                                                            DATOS
+                                                                            GENERALES</h2>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-3 col-12">
+                                                                    <div class="form-group">
+                                                     <span class="mb-2">Edad cumplida: <span
+                                                                 class="text-dark font-weight-bold" id="edad"
+                                                                 name="edad">{{ encuesta.edad }}</span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5 col-12">
+                                                                    <div class="form-group">
+                                                    <span class="mb-2">Fecha de
+                                                                        nacimiento: <span
+                                                                class="text-dark font-weight-bold" id="fechaNacimiento"
+                                                                name="fechaNacimiento">{{ encuesta.persona.fechaNacimiento|date('d-m-Y') }}</span></span>
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-12">
+                                                                    <div class="form-group">
+                                                    <span class="mb-2">Sexo: <span
+                                                                class="text-dark font-weight-bold" id="sexo"
+                                                                name="sexo">{{ encuesta.persona.sexo }}</span></span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Fecha de
+                                                                        valoración: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.fechaValoracion|date('Y-m-d') }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Provincia: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.policlinico.municipio.provincia.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Municipio: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.policlinico.municipio.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Policlínico: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.policlinico.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Nombre: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.persona.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Primer Apellido: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.persona.primerApellido }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Segundo
+                                                                        Apellido: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.persona.segundoApellido }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Género: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.genero }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class=" row">
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Provincia de
+                                                                        residencia: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.muncipioResidencia.provincia.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Municipio de
+                                                                        residencia: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.muncipioResidencia.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Edad cumplida: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.edad }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Estado civil: <span
+                                                                                class="text-dark font-weight-bold">{{ encuesta.estadoCivil.nombre }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-12 pr-1">
+                                                                <div class="form-group">
+                                                                    <span class="mb-2">Empleo(s)
+                                                                            actual(es):
+                                                                        {% for empleo in encuesta.getEncuestaEmpleos() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ empleo.nombre }}</span></span>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        Diagnóstico #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-2-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">
+                                                                DIAGNÓSTICO</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-4 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                         <span class="mb-2">Grado de
+                                                                                independencia:
+                                                                         {% for grado in encuesta.getEncuestaGrados() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ grado.nombre }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                        <span class="mb-2">Factores de
+                                                                                riesgo:
+                                                                         {% for factor in encuesta.getEncuestaRiesgos() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ factor.nombre }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                        <span class="mb-2">Diagnóstico
+                                                                                médico:
+                                                                         {% for diagnostico in encuesta.getEncuestaDiagnosticos() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ diagnostico.nombre }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                        <span class="mb-2">Sistemas
+                                                                                afectados:
+                                                                         {% for sistema in encuesta.getEncuestaSistemas() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ sistema.nombre }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                        <span class="mb-2">Funciones
+                                                                                afectadas:
+                                                                         {% for funcion in encuesta.getEncuestaFunciones() %}
+                                                                        <br>
+                                                                             <span
+                                                                                     class="text-dark font-weight-bold">{{ funcion.nombre }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d1 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-3-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D1.
+                                                                APRENDIZAJE Y
+                                                                APLICACIÓN DEL
+                                                                CONOCIMIENTO</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD1">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd1' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d2 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-4" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-4-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D2.
+                                                                TAREAS Y
+                                                                DEMANDAS
+                                                                GENERALES</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD2">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd2' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d3 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-5" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-5-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D3.
+                                                                CONVERSACIÓN Y
+                                                                UTILIZACIÓN DE
+                                                                APARATOS Y TÉCNICAS DE COMUNICACIÓN</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD3">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd3' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d4 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-6" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-6-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D4.
+                                                                MOVILIDAD</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD4">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd4' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d5 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-7" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-7-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D5.
+                                                                AUTOCUIDADO</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD5">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd5' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d6 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-8" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-8-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D6.
+                                                                TAREAS
+                                                                DEL
+                                                                HOGAR</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD6">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd6' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d7 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-9" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-9-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D7.
+                                                                INTERACCIONES Y
+                                                                RELACIONES
+                                                                INTERPERSONALES</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD7">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd7' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d8 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-10" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-10-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D8.
+                                                                ÁREAS
+                                                                PRINCIPALES
+                                                                DE LA VIDA. TRABAJO
+                                                                Y EMPLEO</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD8">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd8' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        d9 #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-11" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-11-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">D9.
+                                                                VIDA
+                                                                COMUNITARIA</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En
+                                                                los
+                                                                últimos 30
+                                                                días
+                                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                                            <!-- Light table -->
+                                                            <div class="table-responsive">
+                                                                <table class="table align-items-center table-flush"
+                                                                       id="dataD9">
+                                                                    <thead style="background: #272934;color: white">
+                                                                    <tr>
+                                                                        <th scope="col" class="hidden">id</th>
+                                                                        <th scope="col" class="text-center">No.</th>
+                                                                        <th scope="col">Pregunta</th>
+                                                                        <th scope="col" class="text-center">No
+                                                                            lo
+                                                                            puede
+                                                                            hacer
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Severa</th>
+                                                                        <th scope="col" class="text-center">Moderada
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Leve</th>
+                                                                        <th scope="col" class="text-center">Ninguna</th>
+                                                                        <th scope="col" class="text-center">No Aplica
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">Código
+                                                                            CIF-IA-IA
+                                                                        </th>
+                                                                        <th scope="col" class="text-center">
+                                                                            Calificador
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody class="list">
+                                                                    {% set no = 0 %}
+                                                                    {% for pregunta in encuesta.getPreguntas() if pregunta.pregunta.tipoDominio.codigo == 'd9' %}
+                                                                        {% set no = no + 1 %}
+                                                                        <tr data-id="{{ pregunta.pregunta.id }}">
+                                                                            <td class="hidden">{{ pregunta.pregunta.id }}</td>
+                                                                            <td class="text-center">{{ no }}</td>
+                                                                            <td>{{ pregunta.pregunta.nombre }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '0') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '2') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '3') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '4') ? 'X' }}</td>
+                                                                            <td class="text-center bold">{{ (pregunta.respuesta == '-1') ? 'X' }}</td>
+                                                                            <td class="text-center bold">
+                                                                                <strong>{{ pregunta.pregunta.codigo }}</strong>
+                                                                            </td>
+                                                                            <td class="text-center bold">{{ (pregunta.calificador != '-1') ? pregunta.calificador }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {#        Entrevistadores #}
+                                                <div class="tab-pane fade" id="tabs-icons-text-12" role="tabpanel"
+                                                     aria-labelledby="tabs-icons-text-12-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h2 class="card-title text-dark font-weight-bold mb-4">
+                                                                ENTREVISTADORES</h2>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                            <span class="mb-2">Entrevistador registrador:
+                                                                            <span
+                                                                                    class="text-dark font-weight-bold">{{ encuesta.usuarioRegistra.nombreCompleto() }}</span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-12 col-12 pr-1">
+                                                                    <div class="form-group">
+                                                                            <span class="mb-2">Entrevistadores:
+                                                                            {% for entrevistador in encuesta.getEncuestaEntrevistadores() %}
+                                                                                <br>
+                                                                                <span
+                                                                                        class="text-dark font-weight-bold">{{ entrevistador.nombreCompleto() }}</span></span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {#        guardar #}
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="card card-user">
+                                                <div class="card-body">
+                                                    <form>
+                                                        <div class="row justify-content-center">
+                                                            <div class="row">
+                                                                <div class="update ml-auto mr-auto">
+                                                                    <button type="button"
+                                                                            class="btn btn-link text-dark btn-round"
+                                                                            id="btnCancelar"
+                                                                            data-toggle="tooltip"
+                                                                            data-placement="top"
+                                                                            title="Salir">Cancelar
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/plugins/multiselect/js/jquery.multi-select.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            //Roles y permisos de la page
+            {
+                (function () {
+                    {% if not (app.user.isActive) %}
+                    window.location.href = "{{ path('login') }}";
+                    {% endif %}
+                })();
+            }
+
+            //Declaraciones
+            {
+                //Componentes
+                $('#dataD1, #dataD2, #dataD3, #dataD4, #dataD5, #dataD6, #dataD7, #dataD8, #dataD9').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+            }
+
+            //Acciones de persistencia
+            {
+                //--------- abandonar el formulario -----------------
+                $('#btnCancelar').on('click', function () {
+                    window.location.href = "{{ path('gestionarEncuestas') }}";
+                });
+            }
+
+        });
+    </script>
+{% endblock %}
+

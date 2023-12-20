@@ -1,0 +1,37 @@
+<div id="modalAddPregunta" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-default"
+     aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document" style="max-width: 40vw">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default text-uppercase">AGREGAR PREGUNTA</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="addDominio">Dominio</label>
+                <select
+                        class="form-control" id="addDominio"
+                        name="addDominio">
+                    <option value="0">Seleccione ...</option>
+                    {% for dominio in  dominios %}
+                        <option value="{{ dominio.id }}">{{ dominio.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <label for="addCodigo">Código</label>
+                <input type="text" class="form-control"
+                       placeholder="Teclee el código" id="addCodigo"
+                       name="addCodigo">
+                <label for="addNombre">Nombre</label>
+                <textarea
+                        class="form-control textarea"
+                        id="addNombre"
+                        name="addNombre"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm text-white" style="background-color: #303132" id="btnAddGuardar">Guardar</button>
+                <button type="button" class="btn btn-link  text-dark ml-auto" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>

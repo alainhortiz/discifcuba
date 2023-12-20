@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}DisCifCuba 1.0{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- Fonts -->
+        <link href="{{ asset('easyadmin/plugins/login/style.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/login/centro/style.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('assets/css/argon.css') }}" rel="stylesheet" type="text/css">
+    {% endblock %}
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}"/>
+</head>
+<body class="bg-gradient-red-right">
+{% block body %}
+    <!-- partial:index.partial.html -->
+    <div class="container">
+        <section id="content">
+            <form class="login-form" id="loginForm" action="{{ path('login_check') }}" method="post">
+                <a class="navbar-brand" href="#">
+                    <img style="width: 250px" src="{{ asset('images/logo.png') }}"  alt="...">
+                </a>
+                {% if error %}
+                    <div class="alert alert-danger">
+                        <button class="close" data-close="alert"></button>
+                        <strong>Credenciales Inválidas.</strong>
+                    </div>
+                {% endif %}
+                <div>
+                    <input type="text" placeholder="Usuario" required="" id="username" name="_username"
+                           value="{{ last_username }}"/>
+                </div>
+                <div>
+                    <input type="password" placeholder="Password" required="" id="password" name="_password"/>
+                </div>
+                <input type="hidden" name="_target_path" value="/inicio"/>
+                <div class="form-actions">
+                    <input type="submit" value="Aceptar"/>
+                </div>
+            </form><!-- form -->
+            <span>Desarrollo versión 22/12/2022</span>
+            <div class="button">
+                <span>CEDISAP&copy; 2022 </br>Todos los derechos reservados</span>
+            </div><!-- button -->
+        </section><!-- content -->
+    </div><!-- container -->
+{% endblock %}
+</body>
+</html>

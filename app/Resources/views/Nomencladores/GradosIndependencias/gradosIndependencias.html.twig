@@ -1,0 +1,275 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-dark d-inline-block mb-0">Nomenclador de Grados de Independencias</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Grados de Independencias</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <div class="col-lg-12 col-12 text-right">
+                            <button class="btn btn-sm text-white"  style="background-color: #1b1e21" id="addNuevoGrado" type="button"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Agregar una nuevo grado de independencia">Nuevo
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="dataGrados">
+                            <thead style="background: #d93f4f;color: white">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+                            {% if gradosIndependencias %}
+                                {% for grado in gradosIndependencias %}
+                                    <tr data-id="{{ grado.id }}">
+                                        <td>{{ grado.nombre }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-info btn-icon-only rounded-circle editGrado"
+                                                    type="button" data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="Modificar">
+                                        <span class="btn-inner--icon"><i
+                                                    class="fas fa-edit"></i></span>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger btn-icon-only rounded-circle borrarGrado"
+                                                    type="button" data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="Eliminar">
+                                                                                 <span class="btn-inner--icon"><i
+                                                                                             class="fas fa-trash"></i></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{ include('Nomencladores/GradosIndependencias/modalAddGradoIndependencia.html.twig') }}
+            {{ include('Nomencladores/GradosIndependencias/modalEditGradoIndependencia.html.twig') }}
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            //Declaraciones
+            $('#dataGrados').DataTable({
+                "lengthChange": false,
+                "lengthMenu": [[10], [10]]
+            });
+
+            $('#addNuevoGrado').on('click', function () {
+                $('#modalAddGradoIndependencia').modal('show');
+            });
+
+            $('#btnAddGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#addNombre").val() === '') {
+                    alertify.alert('<strong>El grado de independencia es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalAddGradoIndependencia').modal('hide');
+
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    nombre: $("#addNombre").val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("insertGradoIndependencia") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+
+                    if (data === 'ok') {
+                        alertify.alert('<strong>El grado de independencia ha sido insertado correctamente.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                $('#modalAddGradoIndependencia input').each(function () {
+                                    $(this).val('');
+                                });
+                                window.location.href = "{{ path('gestionarGradosIndependencias') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            let idGrado = '';
+            let nombre = '';
+
+            $('#dataGrados tbody').on('click', '.editGrado', function () {
+
+                let row = $(this).parents('tr');
+                idGrado = row.data('id');
+
+                {% if gradosIndependencias %}
+                    {% for grado in gradosIndependencias %}
+                    var id = parseInt('{{ grado.id }}');
+                    if (id === idGrado) {
+                        $('#editNombre').val('{{ grado.nombre }}');
+                        nombre = '{{ grado.nombre }}';
+                    }
+                    {% endfor %}
+                {% endif %}
+                $('#modalEditGradoIndependencia').modal('show');
+            });
+
+            $('#btnEditGuardar').on('click', function () {
+
+                //Validaciones
+                if ($("#editNombre").val() === '') {
+                    alertify.alert('<strong>El grado de independencia es obligatorio, no puede quedar en blanco.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $('#modalEditGradoIndependencia').modal('hide');
+                $(".preload").removeClass('hidden');
+
+                let mat_datos = {
+                    id: idGrado,
+                    nombre: $('#editNombre').val()
+                };
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("updateGradoIndependencia") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if (data === 'ok') {
+                        alertify.alert('<strong>El grado de independecia ha sido modificado correctamente</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label', 'Aceptar')
+                            .set('onok', function () {
+                                window.location.href = "{{ path('gestionarGradosIndependencias') }}";
+                            });
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            });
+
+            $('#dataGrados tbody').on('click', '.borrarGrado', function () {
+
+                let row = $(this).parents('tr');
+
+                let mat_datos = {id: row.data('id')};
+
+                alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea eliminar el grado de independencia seleccionado?</strong>')
+                    .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                    .set('onok', function () {
+
+                        $(".preload").removeClass('hidden');
+
+                        $.ajax({
+                            type: "POST",
+                            dataType: "html",
+                            url: '{{ path("deleteGradoIndependencia") }}',
+                            data: mat_datos
+                        }).done(function (data) {
+
+                            $(".preload").addClass('hidden');
+                            if (data === 'ok') {
+                                alertify.alert('<strong>El grado de independencia seleccionado ha sido eliminado correctamente</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                                    .set('onok', function () {
+                                        row.fadeOut();
+                                    });
+                            } else {
+                                alertify.alert('<strong>' + data + '</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                            }
+                        });
+                    });
+            });
+
+        });
+
+    </script>
+{% endblock %}
+

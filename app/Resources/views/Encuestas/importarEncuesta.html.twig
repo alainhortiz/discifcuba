@@ -1,0 +1,419 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Encuestas</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item"><a href="{{ path('gestionarEncuestas') }}">Encuestas</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Importar</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <h3 class="mb-0">Importar Encuestas</h3>
+                    </div>
+                    <form role="form" id="formAdjuntos" ENCTYPE="multipart/form-data" method="post">
+                        <div class="form-body">
+                            <div class="row" style="margin-left: 5%">
+                                <div class="col-lg-12 col-md-12" style="margin-top: 30px">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="form-control input-lg">
+                                                <input class="btn-secondary" type="file" id="fichero_usuario"
+                                                       name="fichero_usuario">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <button type="button" class="btn btn-round text-white"
+                                                    style="background-color: #303132" id="btnImportar"
+                                                    data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="Importar datos" disabled>Importar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Light table -->
+                        <div class="table-responsive" style="margin-top: 30px">
+                            <table class="table align-items-center table-flush" id="adjuntosTabla">
+                                <thead style="background: #d93f4f;color: white">
+                                <tr>
+                                    <th scope="col" class="text-center">Encuesta</th>
+                                    <th scope="col" class="text-center">Importación</th>
+                                    <th scope="col">Motivo</th>
+                                </tr>
+                                </thead>
+                                <tbody class="list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            //Roles y permisos de la page
+            {
+                (function () {
+                    {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_ENTREVISTADOR")) %}
+                    window.location.href = "{{ path('login') }}";
+                    {% endif %}
+                })();
+            }
+
+            //Declaraciones
+            {
+                var idEncuesta = '';
+
+                var table = $('#dataEncuestas').DataTable({
+                    dom: 'B<"float-left"i><"float-right"f>t<"float-left"l><"float-right"p><"clearfix">',
+                    responsive: false,
+                    order: [[0, "desc"]],
+                    processing: true,
+                    serverSide: true,
+                    ajax: "dataTableEncuestasAjax",
+                    columnDefs: [
+                        {"name": "id", "targets": 0, "visible": false},
+                        {"name": "provincia", "targets": 1},
+                        {"name": "municipio", "targets": 2},
+                        {"name": "fecha", "targets": 3},
+                        {"name": "carne", "targets": 4},
+                        {"name": "nombreCompleto", "targets": 5},
+                        {"name": "entrevistador", "targets": 6},
+                        {"name": "supervisor", "targets": 7},
+                        {"className": "dt-center", "targets": [3, 4]},
+                    ],
+                    "initComplete": function () {
+                        this.api().columns().every(function () {
+                            var that = this;
+
+                            $('input', this.footer()).on('keyup change', function () {
+                                if (that.search() !== this.value) {
+                                    that
+                                        .search(this.value)
+                                        .draw();
+                                }
+                            });
+                        })
+                    },
+                    searchDelay: 1000,
+                    "lengthMenu": [[8], [8]]
+                });
+            }
+
+            //js para agregar adjuntos inicio
+            {
+
+                var adjuntos = [];
+                var L = 0;
+                // Validar extensiones del adjunto
+                $("#fichero_usuario").on('change', function (e) {
+                    var fichero = $("#fichero_usuario").val();
+                    var input = document.getElementById('fichero_usuario');
+                    var file = input.files[0]; //2 000 000
+                    var allowedExtensions = /(.xlsm)$/i;
+
+                    if (!allowedExtensions.exec(fichero)) {
+                        alertify.alert('<strong>Sólo se pueden subir archivos con extensiones: .xlsm.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar');
+                        $("#fichero_usuario").val('');
+                        return false;
+                    } else if (file.size > 2000000) {
+                        alertify.alert('<strong>El tamano del fichero no puede ser mayor que 2 MB.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar');
+                        $("#fichero_usuario").val('');
+                        return false;
+                    } else {
+                        $("#btnImportar").prop('disabled', false);
+                    }
+                });
+
+                //funcion que agrega un adjunto  y la visualiza en la tabla
+                $('#btnImportar').on('click', function (e) {
+
+                    var fichero = $("#fichero_usuario").val();
+                    if (fichero === '') {
+                        alertify.alert('<strong>Seleccione un fichero adjunto</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar');
+                        return false;
+                    }
+
+                    $("#btnImportar").prop('disabled', true);
+
+                    $(".preload").removeClass('hidden');
+
+                    e.preventDefault();
+                    /*var f = $(this);*/
+                    var formData = new FormData(document.getElementById("formAdjuntos"));
+                    /* formData.append("dato", "valor");*/
+                    //formData.append(f.attr("name"), $(this)[0].files[0]);
+
+                    $.ajax({
+                        url: '{{ path('obtenerDocumento') }}',
+                        type: "post",
+                        dataType: "json",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    }).done(function (data) {
+
+                        $(".preload").addClass('hidden');
+
+                        var obj = JSON.parse(data);
+
+                        if (obj['valido']) {
+                            alertify.alert('<strong>El documento ha sido importada correctamente</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                .set('label', 'Aceptar')
+                                .set('onok', function () {
+                                    $("#fichero_usuario").val('');
+                                });
+                        } else {
+                            alertify.alert('<strong>' + obj['motivo'] + '</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label','Aceptar')
+                                .set('onok', function () {
+                                    $("#fichero_usuario").val('');
+                                });
+                        }
+
+                    });
+                });
+
+                //funcion que elimina un registro del adjunto seleccionado y  de la tabla
+                $('#adjuntosTabla tbody').on('click', '.delete', function () {
+
+                    var row = $(this).parents('tr');
+                    var pos = row.data('id');
+
+                    var mat_datos = {
+                        idDocumento: adjuntos[pos]['idDocumento'],
+                        idExpediente: 0 //Sustituir por el no. de expediente
+                    };
+
+                    alertify.confirm('Basic: false').set('message', 'Seguro que desea eliminar el adjunto').set('onok', function () {
+
+                        $(".preload").removeClass('hidden');
+
+                        $.ajax({
+                            type: "POST",
+                            dataType: "html",
+                            url: '{{ path("adjuntoEliminar") }}',
+                            data: mat_datos
+                        }).done(function (data) {
+                            $(".preload").addClass('hidden');
+                            if (data === 'ok') {
+                                //Elimina de la tabla
+                                id = row.data('id');
+                                row.fadeOut();
+                                delete adjuntos[id];
+                            } else {
+                                alertify.alert('<strong>' + data + '</strong>')
+                                    .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                        '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                    .set('label', 'Aceptar')
+                            }
+                        });
+                    });
+
+                });
+                //js para agregar adjuntos fin
+            }
+
+            //Localizar persona
+            {
+                $('#addNuevaEncuesta').on('click', function () {
+                    $('#carnetPersona').val('');
+                    $('#modalBuscarPersona').modal('show');
+                });
+
+                $('#carnetPersona').on("keyup", function () {
+
+                    if ($('#carnetPersona').val().trim().length === 11) {
+                        $('#btnBuscarPersona').prop("disabled", false);
+                    } else {
+                        $('#btnBuscarPersona').prop("disabled", true);
+                    }
+                });
+
+                let reg = new RegExp(/(\d\d)(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])\d\d\d\d\d/);
+
+                $('#btnBuscarPersona').on('click', function () {
+                    if (reg.test($('#carnetPersona').val())) {
+                        var enlace = "{{ path('localizarPersona', {ci:'id'}) }}";
+                        var ruta = enlace.replace('id', $('#carnetPersona').val());
+                        window.location.href = ruta;
+                    } else {
+                        alertify.alert('<strong>Teclee un no. de carné de identidad válido.</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                            .set('label', 'Aceptar');
+                        return false;
+                    }
+                });
+            }
+
+            //Acciones de persistencia
+            {
+                $('#dataEncuestas tbody').on('click', '.verEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    var enlace = "{{ path('verEncuesta', {idEncuesta:'id'}) }}";
+                    var ruta = enlace.replace('id', idEncuesta);
+                    window.location.href = ruta;
+                });
+
+                $('#dataEncuestas tbody').on('click', '.editEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    var enlace = "{{ path('editEncuesta', {idEncuesta:'id'}) }}";
+                    var ruta = enlace.replace('id', idEncuesta);
+                    window.location.href = ruta;
+                });
+
+                $('#dataEncuestas tbody').on('click', '.aprobarEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    let mat_datos = {id: idEncuesta};
+
+                    alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea aprobar la encuesta seleccionada?</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('onok', function () {
+
+                            $(".preload").removeClass('hidden');
+
+                            $.ajax({
+                                type: "POST",
+                                dataType: "html",
+                                url: '{{ path("aprobarEncuesta") }}',
+                                data: mat_datos
+                            }).done(function (data) {
+
+                                $(".preload").addClass('hidden');
+                                if (data === 'ok') {
+
+                                    alertify.alert('<strong>La encuesta seleccionada ha sido aprobada correctamente</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                        .set('onok', function () {
+                                            window.location.href = "{{ path('gestionarEncuestas') }}";
+                                        });
+                                } else {
+                                    alertify.alert('<strong>' + data + '</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                }
+                            });
+                        });
+                });
+
+                $('#dataEncuestas tbody').on('click', '.borrarEncuesta', function () {
+
+                    let data = table.row($(this).parents('tr')).data();
+                    idEncuesta = parseInt(data[0]);
+
+                    let mat_datos = {id: idEncuesta};
+
+                    alertify.confirm('Basic: false').set('message', '<strong>Seguro que desea eliminar la encuesta seleccionada?</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('onok', function () {
+
+                            $(".preload").removeClass('hidden');
+
+                            $.ajax({
+                                type: "POST",
+                                dataType: "html",
+                                url: '{{ path("deleteEncuesta") }}',
+                                data: mat_datos
+                            }).done(function (data) {
+
+                                $(".preload").addClass('hidden');
+                                if (data === 'ok') {
+
+                                    alertify.alert('<strong>La encuesta seleccionada ha sido eliminada correctamente</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                        .set('onok', function () {
+                                            window.location.href = "{{ path('gestionarEncuestas') }}";
+                                        });
+                                } else {
+                                    alertify.alert('<strong>' + data + '</strong>')
+                                        .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                        .set('label', 'Aceptar')
+                                }
+                            });
+                        });
+                });
+            }
+
+
+        });
+
+    </script>
+{% endblock %}
+

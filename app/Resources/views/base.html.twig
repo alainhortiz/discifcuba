@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}DisCifCuba 1.0{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- Fonts -->
+        <link href="{{ asset('easyadmin/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet"/>
+        <!-- Icons -->
+        <link href="{{ asset('assets/vendor/nucleo/css/nucleo.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet"
+              type="text/css">
+        <!-- BEGIN THEME STYLES -->
+        <link href="{{ asset('easyadmin/global/css/components.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/plugins.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/layout.css') }}" rel="stylesheet">
+        <!-- Argon CSS -->
+        <link href="{{ asset('assets/css/argon.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/alertify.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/themes/default.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/global/css/estilos.css') }}" rel="stylesheet">
+    {% endblock %}
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}"/>
+</head>
+
+<body>
+{% block navVertical %}{% endblock navVertical %}
+<!-- Sidenav horizontal-->
+{% block navHorizontal %}
+    <div class="main-content" id="panel">
+        <!-- Topnav -->
+        <nav class="navbar navbar-top navbar-expand navbar-dark bg-gradient-red-right border-bottom">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar links -->
+                    <ul class="navbar-nav align-items-center  ml-md-auto ">
+                        <li class="nav-item d-xl-none">
+                            <!-- Sidenav toggler -->
+                            <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin"
+                                 data-target="#sidenav-main">
+                                <div class="sidenav-toggler-inner">
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item d-sm-none">
+                            <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
+                                <i class="ni ni-zoom-split-in"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                               aria-expanded="false">
+                                <i id="pulsate-regular" class="ni ni-bell-55 text-gray-dark"></i>
+                            </a>
+                            {% if (app.session.get('notificacion') > 0) %}
+                                <div class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
+                                    <div class="list-group list-group-flush">
+                                        <a href="{{ path('gestionarEncuestas') }}" class="list-group-item list-group-item-action">
+                                            <div class="row align-items-center">
+                                                <div class="col ml--1">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h4 class="mb-0 text-sm">Encuestas</h4>
+                                                        </div>
+                                                        <div class="text-right text-muted">
+                                                            <span class="badge badge-pill badge-default">{{ app.session.get('notificacion') }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm mb-0">Pendientes por aprobar</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                               aria-expanded="false">
+                                <div class="media align-items-center text-dark">
+                                    <i class="ni ni-single-02"></i>
+                                    <div class="media-body  ml-2  d-none d-lg-block">
+                                        <span class="mb-0 text-sm  font-weight-bold">{{ app.user.nombresCompletos() }} </span>
+                                        <span class="mb-0 text-sm  font-weight-bold text-gray-dark">{{ (app.user.supervisor) ? 'Supervisor' }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu  dropdown-menu-right ">
+                                <a href="{{ path('passwordForm') }}" class="dropdown-item">
+                                    <i class="ni ni-settings-gear-65"></i>
+                                    <span>Cambiar contraseña</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{{ path('login') }}" class="dropdown-item">
+                                    <i class="fas fa-mail-forward"></i>
+                                    <span>Salir</span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% block body %}
+            {% block footer %}
+                <footer class="footer pt-0">
+                    <div class="row align-items-center justify-content-lg-between">
+                        <div class="col-lg-12">
+                            <div class="copyright text-center  text-lg-center  text-muted">
+                                &copy; 2022 Dirección de
+                                Registros Médicos y Estadísticas de Salud
+                                <img style="width: 30px" src="{{ asset('images/logoest.png') }}"
+                                     class="navbar-brand-img" alt="...">
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            {% endblock footer %}
+        {% endblock body %}
+        {% block javascripts %}
+            <!-- Argon Scripts -->
+            <!-- Core -->
+            <script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('easyadmin/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
+            <script src="{{ asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js') }}"></script>
+            <!-- Optional JS -->
+            <!-- Argon JS -->
+            {#<script src="../assets/js/argon.js?v=1.2.0"></script>#}
+            <script src="{{ asset('easyadmin/plugins/jquery.pulsate.min.js') }}"></script>
+            <script src="{{ asset('easyadmin/plugins/Alertify/alertify.js') }}"></script>
+            <script src="{{ asset('easyadmin/global/js/moment.js') }}"></script>
+            <script src="{{ asset('easyadmin/global/js/formatoTipos.js') }}"></script>
+            <script src="{{ asset('easyadmin/global/js/functionsAll.js') }}"></script>
+            <script src="{{ asset('easyadmin/plugins/ui-general.js') }}"></script>
+            <script>
+                jQuery(document).ready(function () {
+                    {% if (app.session.get('notificacion') > 0) %}
+                    UIGeneral.init();
+                    {% endif %}
+                });
+            </script>
+        {% endblock %}
+    </div>
+{% endblock navHorizontal %}
+
+</body>
+
+</html>

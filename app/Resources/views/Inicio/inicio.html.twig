@@ -1,0 +1,1098 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block body %}
+  <!-- Alerta -->
+  <div class="preload hidden">
+    <div class="logo"></div>
+    <div class="loader-frame">
+      <div class="loader1" id="loader1"></div>
+      <div class="loader2" id="loader2"></div>
+    </div>
+  </div>
+  <!-- Sidenav Vertical-->
+  {% block navVertical %}
+    {{ parent() }}
+    <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+      <div class="scrollbar-inner">
+        <!-- Brand -->
+        <div class="sidenav-header  align-items-center">
+          <a class="navbar-brand" href="{{ path('inicio') }}">
+            <img style="width: 180px" src="{{ asset('images/logo.png') }}" class="navbar-brand-img" alt="...">
+          </a>
+        </div>
+        <div class="navbar-inner">
+          <!-- Collapse -->
+          <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+            <!-- Nav items -->
+            <ul class="navbar-nav">
+              <!-- Menu de encuestas -->
+              <li class="nav-item">
+                <a class="nav-link" href="{{ path('gestionarEncuestas') }}">
+                  <i class="fas fa-file-text text-default"></i>
+                  <span class="nav-link-text">Encuestas</span>
+                </a>
+              </li>
+              <!-- Menu de reportes -->
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="collapse" href="#ui-reporte" aria-expanded="false"
+                   aria-controls="ui-basic">
+                  <i class="fas fa-file-excel-o text-default"></i>
+                  <span class="menu-title">Reportes</span>
+                  <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-reporte">
+                  <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ path('reporteDominio') }}">
+                        <i class="fas fa-caret-right text-default"></i>
+                        <span class="nav-link-text">Dominios</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ path('reporteSexoEdad') }}">
+                        <i class="fas fa-caret-right text-default"></i>
+                        <span class="nav-link-text">Sexo y grupo de edades</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <!-- Menu de nomencladores -->
+              {% if is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO") %}
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="collapse" href="#ui-nomenclador" aria-expanded="false"
+                     aria-controls="ui-basic">
+                    <i class="fas fa-cogs text-default"></i>
+                    <span class="menu-title">Nomencladores</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="collapse" id="ui-nomenclador">
+                    <ul class="nav flex-column sub-menu">
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarUsuarios') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Usuarios</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarDiagnosticosMedicos') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Diagnósticos médicos</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarEmpleos') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Empleos</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarEstadosCiviles') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Estados civiles</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarFactoresRiesgos') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Factores de riesgos</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarFuncionesAfectadas') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Funciones afectadas</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarGradosIndependencias') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Grados de independencias</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarPoliclinicos') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Policlínicos</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarPreguntas') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Preguntas</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarProfesiones') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Profesiones</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarProvincias') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Provincias</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarMunicipios') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Municipios</span>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ path('gestionarSistemasAfectados') }}">
+                          <i class="fas fa-caret-right text-default"></i>
+                          <span class="nav-link-text">Sistemas afectados</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ path('trazas') }}">
+                    <i class="fas fa-cog text-default"></i>
+                    <span class="nav-link-text">Trazas</span>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+            <!-- Menu de manual de usuario -->
+            <!-- Divider -->
+            <hr class="my-4">
+            <!-- Heading -->
+            <h6 class="navbar-heading p-0 text-muted">
+              <span class="docs-normal">Documentación</span>
+            </h6>
+            <!-- Navigation -->
+            <ul class="navbar-nav mb-md-3">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ asset('plantillas/Manual.pdf') }}" target="_blank">
+                  <i class="ni ni-books"></i>
+                  <span class="nav-link-text">Ayuda</span>
+                </a>
+            </ul>
+            <ul class="navbar-nav mb-md-3">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ asset('plantillas/PlantillaEncuesta.xlsx') }}" target="_blank">
+                  <i class="fas fa-file-excel-o"></i>
+                  <span class="nav-link-text">Excel Instrumento CIF</span>
+                </a>
+            </ul>
+            <ul class="navbar-nav mb-md-3">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ asset('plantillas/CIF.pdf') }}" target="_blank">
+                  <i class="fas fa-file-archive"></i>
+                  <span class="nav-link-text">Instrumento CIF</span>
+                </a>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  {% endblock navVertical %}
+  <!-- Header -->
+  <div class="header bg-gradient-red-right pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Panel de datos</h6>
+          </div>
+{#          <div class="col-lg-6 col-5 text-right">#}
+{#            <a href="#" class="btn btn-sm btn-neutral">Filtros</a>#}
+{#          </div>#}
+        </div>
+        <!-- Card stats -->
+        {% block info %}
+          <div class="row	justify-content-md-center">
+            <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Entrevistados</h5>
+                      <span class="h2 font-weight-bold mb-0" id="nameEntrevistados">{{ totalEntrevistados|number_format(0, '.', ',') }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-cyan text-white rounded-circle shadow">
+                        <i class="fas fa-users"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Hombres</h5>
+                      <span class="h2 font-weight-bold mb-0" id="nameHombres">{{ pHombres ~ ' %' }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                        <i class="ni ni-chart-pie-35"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Mujer</h5>
+                      <span class="h2 font-weight-bold mb-0" id="nameMujer">{{ pMujeres ~ ' %' }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-default text-white rounded-circle shadow">
+                        <i class="ni ni-chart-pie-35"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Otros</h5>
+                      <span class="h2 font-weight-bold mb-0" id="nameOtros">{{ pOtros ~ ' %' }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                        <i class="ni ni-chart-pie-35"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-header bg-transparent">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase ls-1 mb-1">Gráfica</h6>
+                <h5 class="h3 text-default mb-0" id="cardProvincia">Entrevistados por provincias</h5>
+              </div>
+              <div class="col-1 text-right">
+                <a href="#" class="btn btn-sm btn-primary" id="btnRegresar" style="display: none"><i class="fa fa-backward"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Chart -->
+            <div class="chart" id="graficoProvincias">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-4">
+        <div class="card">
+          <div class="card-header bg-transparent">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase ls-1 mb-1">Gráfica</h6>
+                <h5 class="h3 text-default mb-0" id="cardGenero">Grupos de edades y género</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Chart -->
+            <div class="chart" id="graficoGenero">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="card">
+          <div class="card-header bg-transparent">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase text-muted ls-1 mb-1">Gráfica</h6>
+                <h5 class="h3 mb-0" id="cardGrado">Grado de Independencia</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Chart -->
+            <div class="chart" id="graficoGradoIndependencia">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="card">
+          <div class="card-header bg-transparent">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase text-muted ls-1 mb-1">Gráfica</h6>
+                <h5 class="h3 mb-0" id="cardFuncion">Grupos de edades y función afectada</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Chart -->
+            <div class="chart" id="graficoFuncionAfectada">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% block footer %}
+      {{ parent() }}
+    {% endblock %}
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('easyadmin/plugins/highstock/code/highstock.js') }}"></script>
+  <script>
+    jQuery(document).ready(function () {
+
+      (function () {
+        {% if not (app.user.isActive) %}
+        window.location.href = "{{ path('login') }}";
+        {% endif %}
+      })();
+
+      //Declaracion de variables
+        let totalEntrevistadosProvincia = [];
+        let totalEntrevistadosMunicipio = [];
+        let totalEntrevistadosGrado = [];
+        let totalGeneroHombre = [];
+        let totalGeneroMujer = [];
+        let totalGeneroOtro = [];
+        let funcionesNombre = [];
+        let funcionesRango1 = [];
+        let funcionesRango2 = [];
+        let funcionesRango3 = [];
+        let funcionesRango4 = [];
+        let funcionesRango5 = [];
+        let n;
+
+      $('#btnRegresar').on("click", function () {
+         $('#btnRegresar').css("display", "none");
+         inicio();
+      });
+
+      function inicio(){
+        totalGeneroHombre = [];
+        totalGeneroMujer = [];
+        totalGeneroOtro = [];
+        totalEntrevistadosGrado = [];
+        funcionesRango1 = [];
+        funcionesRango2 = [];
+        funcionesRango3 = [];
+        funcionesRango4 = [];
+        funcionesRango5 = [];
+        $('#nameEntrevistados').text('{{ totalEntrevistados|number_format(0, '.', ',') }}');
+        $('#nameHombres').text('{{ pHombres ~ ' %' }}');
+        $('#nameMujer').text('{{ pMujeres ~ ' %' }}');
+        $('#nameOtros').text('{{ pOtros ~ ' %' }}');
+        $('#cardProvincia').text(' Entrevistados por provincias');
+        $('#cardGenero').text(' Grupos de edades y género');
+        $('#cardGrado').text(' Grado de Independencia' );
+        $('#cardFuncion').text(' Grupos de edades y función afectada');
+
+        {% for graficoTotal in entrevistadosProvincias %}
+        totalEntrevistadosProvincia.push({
+          name: '{{ graficoTotal['provincia'] }}',
+          y: parseInt('{{ graficoTotal['total'] }}')
+        });
+        {% endfor %}
+
+        {% for graficoTotal in entrevistadosGrados %}
+        totalEntrevistadosGrado.push({
+          name: '{{ graficoTotal['grado'] }}',
+          y: parseInt('{{ graficoTotal['total'] }}')
+        });
+        {% endfor %}
+
+        {% for genero in generoHombre %}
+        totalGeneroHombre.push([ {{ genero }} ]);
+        {% endfor %}
+
+        {% for genero in generoMujer %}
+        totalGeneroMujer.push([ {{ genero }} ]);
+        {% endfor %}
+
+        {% for genero in generoOtro %}
+        totalGeneroOtro.push([ {{ genero }} ]);
+        {% endfor %}
+
+        {% for funcion in funciones %}
+        funcionesNombre.push('{{ funcion['funcion'] }}');
+        {% endfor %}
+
+        {% for cantidad in rango1Funcion %}
+        funcionesRango1.push([ {{ cantidad }} ]);
+        {% endfor %}
+
+        {% for cantidad in rango2Funcion %}
+        funcionesRango2.push([ {{ cantidad }} ]);
+        {% endfor %}
+
+        {% for cantidad in rango3Funcion %}
+        funcionesRango3.push([ {{ cantidad }} ]);
+        {% endfor %}
+
+        {% for cantidad in rango4Funcion %}
+        funcionesRango4.push([ {{ cantidad }} ]);
+        {% endfor %}
+
+        {% for cantidad in rango5Funcion %}
+        funcionesRango5.push([ {{ cantidad }} ]);
+        {% endfor %}
+
+        graficoTotalEntrevistadosProvincias();
+        graficoTotalEntrevistadosEdadGenero();
+        graficoTotalEntrevistadosGrado();
+        graficoTotalEntrevistadosFuncionGenero();
+      }
+
+      inicio();
+
+      function graficoTotalEntrevistadosProvincias() {
+        let valorMax = totalEntrevistadosProvincia.length - 1;
+        let valorScrollbar = false;
+        if (totalEntrevistadosProvincia.length > 6) {
+          valorMax = 5;
+          valorScrollbar = true;
+        }
+        Highcharts.chart('graficoProvincias', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: null
+          },
+          exporting: {
+            enabled: false
+          },
+          scrollbar: {
+            enabled: valorScrollbar,
+            liveRedraw: true,
+            step: 1
+          },
+          xAxis: {
+            type: 'category',
+            min: 0,
+            max: valorMax,
+            useHTML: true
+          },
+          yAxis: {
+            title: {
+              text: 'Entrevistados',
+              useHTML: true
+            }
+
+          },
+          legend: {
+            enabled: false
+          },
+          plotOptions: {
+            series: {
+              borderWidth: 0,
+              allowPointSelect: true,
+              cursor: 'pointer',
+              getExtremesFromAll: true,
+              dataLabels: {
+                enabled: true,
+                formatter: function () {
+                  return Highcharts.numberFormat(this.y, 0, ',', '.');
+                }
+              }
+            }
+          },
+          tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' total de entrevistados ' + '<b>{point.y:,.0f}</b>'
+          },
+
+          "series": [
+            {
+              "name": "Provincias",
+              "colorByPoint": true,
+              "data": totalEntrevistadosProvincia,
+              events: {
+                click: function (oEvent) {
+                  obtenerProvincia(oEvent.point.name, oEvent.point.y, oEvent.point.color);
+                }
+              }
+            }
+          ],
+          responsive: {
+            rules: [{
+              condition: {
+                maxWidth: 800
+              },
+              chartOptions: {
+                scrollbar: {
+                  enabled: true
+                },
+                xAxis: {
+                  min: 0,
+                  max: 1,
+                  useHTML: true
+                }
+              }
+            }]
+          }
+        });
+      }
+
+      function graficoTotalEntrevistadosMunicipios() {
+        let valorMax = totalEntrevistadosProvincia.length - 1;
+        let valorScrollbar = false;
+        if (totalEntrevistadosProvincia.length > 6) {
+          valorMax = 5;
+          valorScrollbar = true;
+        }
+        Highcharts.chart('graficoProvincias', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: null
+          },
+          exporting: {
+            enabled: false
+          },
+          scrollbar: {
+            enabled: valorScrollbar,
+            liveRedraw: true,
+            step: 1
+          },
+          xAxis: {
+            type: 'category',
+            min: 0,
+            max: valorMax,
+            useHTML: true
+          },
+          yAxis: {
+            title: {
+              text: 'Entrevistados',
+              useHTML: true
+            }
+
+          },
+          legend: {
+            enabled: false
+          },
+          plotOptions: {
+            series: {
+              borderWidth: 0,
+              allowPointSelect: true,
+              cursor: 'pointer',
+              getExtremesFromAll: true,
+              dataLabels: {
+                enabled: true,
+                formatter: function () {
+                  return Highcharts.numberFormat(this.y, 0, ',', '.');
+                }
+              }
+            }
+          },
+          tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' total de entrevistados ' + '<b>{point.y:,.0f}</b>'
+          },
+
+          "series": [
+            {
+              "name": "Municipios",
+              "colorByPoint": true,
+              "data": totalEntrevistadosMunicipio,
+              events: {
+                click: function (oEvent) {
+                  obtenerMunicipio(oEvent.point.name, oEvent.point.y, oEvent.point.color);
+                }
+              }
+            }
+          ],
+          responsive: {
+            rules: [{
+              condition: {
+                maxWidth: 800
+              },
+              chartOptions: {
+                scrollbar: {
+                  enabled: true
+                },
+                xAxis: {
+                  min: 0,
+                  max: 1,
+                  useHTML: true
+                }
+              }
+            }]
+          }
+        });
+      }
+
+      function graficoTotalEntrevistadosEdadGenero() {
+        Highcharts.chart('graficoGenero', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: null
+          },
+          exporting: {
+            enabled: false
+          },
+          scrollbar: {
+            enabled: false,
+            liveRedraw: true,
+            step: 1
+          },
+          xAxis: {
+            categories: ['< 19', '19-29', '30-59', '60-69','> 69']
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: 'Género'
+            },
+            stackLabels: {
+              enabled: true,
+              style: {
+                fontWeight: 'bold',
+                color: ( // theme
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                ) || 'gray',
+                textOutline: 'none'
+              }
+            }
+          },
+          legend: {
+            align: 'center',
+            backgroundColor:
+                    Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            shadow: false
+          },
+          tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+          },
+          plotOptions: {
+            column: {
+              stacking: 'normal',
+              dataLabels: {
+                enabled: true
+              }
+            }
+          },
+          series: [{
+            name: 'Hombre',
+            data: totalGeneroHombre
+          }, {
+            name: 'Mujer',
+            data: totalGeneroMujer
+          }, {
+            name: 'Otros',
+            data: totalGeneroOtro
+          }]
+        });
+      }
+
+      function graficoTotalEntrevistadosGrado() {
+        Highcharts.chart('graficoGradoIndependencia', {
+          chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+          },
+          title: {
+            text: null
+          },
+          exporting: {
+            enabled: false
+          },
+          tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+                    'Grado: <b>{point.y}</b><br/>' +
+                    'que representa el <b>{point.percentage:.1f}%</b>'
+          },
+          legend: {
+            layaout: 'horizontal',
+            alignColumns: false,
+            align: 'center',
+            margin: -10
+          },
+          plotOptions: {
+            pie: {
+              dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.y:.0f}',
+              }
+            }
+          },
+          series: [{
+            minPointSize: 10,
+            zMin: 0,
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: false
+            },
+            showInLegend: true,
+            name: 'Grados',
+            colorByPoint: true,
+            data: totalEntrevistadosGrado
+          }]
+        });
+      }
+
+      function graficoTotalEntrevistadosFuncionGenero() {
+        let valorMax = funcionesNombre.length - 1;
+        let valorScrollbar = false;
+        if (funcionesNombre.length > 6) {
+          valorMax = 5;
+          valorScrollbar = true;
+        }
+        Highcharts.chart('graficoFuncionAfectada', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: null
+          },
+          exporting: {
+            enabled: false
+          },
+          scrollbar: {
+            enabled: valorScrollbar,
+            liveRedraw: true,
+            step: 1
+          },
+          xAxis: {
+            categories: funcionesNombre
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: 'Género'
+            },
+            stackLabels: {
+              enabled: true,
+              style: {
+                fontWeight: 'bold',
+                color: ( // theme
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                ) || 'gray',
+                textOutline: 'none'
+              }
+            }
+          },
+          legend: {
+            align: 'center',
+            backgroundColor:
+                    Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            shadow: false
+          },
+          tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+          },
+          plotOptions: {
+            column: {
+              stacking: 'normal',
+              dataLabels: {
+                enabled: true
+              }
+            }
+          },
+          series: [{
+            name: '< 19',
+            data: funcionesRango1
+          }, {
+            name: '19-29',
+            data: funcionesRango2
+          }, {
+            name: '30-59',
+            data: funcionesRango3
+          }, {
+            name: '60-69',
+            data: funcionesRango4
+          }, {
+            name: '> 69',
+            data: funcionesRango5
+          }]
+        });
+      }
+
+      function obtenerProvincia(provincia, cantidad, colorSeleccionado) {
+
+        $(".preload").removeClass('hidden');
+
+        let mat_datos = {
+          provincia: provincia,
+        };
+
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: '{{ path("graficoProvincia") }}',
+          data: mat_datos
+        }).done(function (data) {
+
+          $(".preload").addClass('hidden');
+          let obj = JSON.parse(data);
+          let municipios = obj['entrevistadosMunicipios'];
+          let totalEntrevistados = obj['totalEntrevistados'];
+          let pHombres = obj['pHombres'];
+          let pMujeres = obj['pMujeres'];
+          let pOtros = obj['pOtros'];
+          let hombres = obj['generoHombre'];
+          let mujeres = obj['generoMujer'];
+          let otros = obj['generoOtro'];
+          let grados = obj['entrevistadosGrados'];
+          let rango1 = obj['rango1Funcion'];
+          let rango2 = obj['rango2Funcion'];
+          let rango3 = obj['rango3Funcion'];
+          let rango4 = obj['rango4Funcion'];
+          let rango5 = obj['rango5Funcion'];
+
+
+          totalEntrevistadosMunicipio = [];
+          for (n = 0; n < municipios.length; n++) {
+            totalEntrevistadosMunicipio.push({
+              name: municipios[n]['municipio'],
+              y: parseFloat(municipios[n]['total']),
+              color: colorSeleccionado
+            });
+          }
+
+          totalGeneroHombre = [];
+          for (n = 0; n < hombres.length; n++) {
+            totalGeneroHombre.push([
+              parseInt(hombres[n])
+            ]);
+          }
+
+          totalGeneroMujer = [];
+          for (n = 0; n < mujeres.length; n++) {
+            totalGeneroMujer.push([
+              parseInt(mujeres[n])
+            ]);
+          }
+
+          totalGeneroOtro = [];
+          for (n = 0; n < otros.length; n++) {
+            totalGeneroOtro.push([
+              parseInt(otros[n])
+            ]);
+          }
+
+          totalEntrevistadosGrado = [];
+          for (n = 0; n < grados.length; n++) {
+            totalEntrevistadosGrado.push({
+              name: grados[n]['grado'],
+              y: parseFloat(grados[n]['total']),
+              color: colorSeleccionado
+            });
+          }
+
+          funcionesRango1 = [];
+          for (n = 0; n < rango1.length; n++) {
+            funcionesRango1.push([
+              parseInt(rango1[n])
+            ]);
+          }
+
+          funcionesRango2 = [];
+          for (n = 0; n < rango2.length; n++) {
+            funcionesRango2.push([
+              parseInt(rango2[n])
+            ]);
+          }
+
+          funcionesRango3 = [];
+          for (n = 0; n < rango3.length; n++) {
+            funcionesRango3.push([
+              parseInt(rango3[n])
+            ]);
+          }
+
+          funcionesRango4 = [];
+          for (n = 0; n < rango4.length; n++) {
+            funcionesRango4.push([
+              parseInt(rango4[n])
+            ]);
+          }
+
+          funcionesRango5 = [];
+          for (n = 0; n < rango5.length; n++) {
+            funcionesRango5.push([
+              parseInt(rango5[n])
+            ]);
+          }
+
+          $('#nameEntrevistados').text(Highcharts.numberFormat(totalEntrevistados, 0, ',', '.') + ' %');
+          $('#nameHombres').text(Highcharts.numberFormat(pHombres, 0, ',', '.') + ' %');
+          $('#nameMujer').text(Highcharts.numberFormat(pMujeres, 0, ',', '.') + ' %');
+          $('#nameOtros').text(Highcharts.numberFormat(pOtros, 0, ',', '.') + ' %');
+          $('#cardProvincia').text(' Entrevistados en la provincia ' + provincia);
+          $('#cardGenero').text(' Grupos de edades y género en ' + provincia);
+          $('#cardGrado').text(' Grado de Independencia en ' + provincia);
+          $('#cardFuncion').text(' Grupos de edades y función afectada en ' + provincia);
+          $('#btnRegresar').css("display", "block");
+
+          graficoTotalEntrevistadosMunicipios();
+          graficoTotalEntrevistadosEdadGenero();
+          graficoTotalEntrevistadosGrado();
+          graficoTotalEntrevistadosFuncionGenero();
+
+         });
+      }
+
+      function obtenerMunicipio(municipio, cantidad, colorSeleccionado) {
+
+        $(".preload").removeClass('hidden');
+
+        let mat_datos = {
+          municipio: municipio,
+        };
+
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: '{{ path("graficoMunicipio") }}',
+          data: mat_datos
+        }).done(function (data) {
+
+          $(".preload").addClass('hidden');
+          let obj = JSON.parse(data);
+          let totalEntrevistados = obj['totalEntrevistados'];
+          let pHombres = obj['pHombres'];
+          let pMujeres = obj['pMujeres'];
+          let pOtros = obj['pOtros'];
+          let hombres = obj['generoHombre'];
+          let mujeres = obj['generoMujer'];
+          let otros = obj['generoOtro'];
+          let grados = obj['entrevistadosGrados'];
+          let rango1 = obj['rango1Funcion'];
+          let rango2 = obj['rango2Funcion'];
+          let rango3 = obj['rango3Funcion'];
+          let rango4 = obj['rango4Funcion'];
+          let rango5 = obj['rango5Funcion'];
+
+          totalGeneroHombre = [];
+          for (n = 0; n < hombres.length; n++) {
+            totalGeneroHombre.push([
+              parseInt(hombres[n])
+            ]);
+          }
+
+          totalGeneroMujer = [];
+          for (n = 0; n < mujeres.length; n++) {
+            totalGeneroMujer.push([
+              parseInt(mujeres[n])
+            ]);
+          }
+
+          totalGeneroOtro = [];
+          for (n = 0; n < otros.length; n++) {
+            totalGeneroOtro.push([
+              parseInt(otros[n])
+            ]);
+          }
+
+          totalEntrevistadosGrado = [];
+          for (n = 0; n < grados.length; n++) {
+            totalEntrevistadosGrado.push({
+              name: grados[n]['grado'],
+              y: parseFloat(grados[n]['total']),
+              color: colorSeleccionado
+            });
+          }
+
+          funcionesRango1 = [];
+          for (n = 0; n < rango1.length; n++) {
+            funcionesRango1.push([
+              parseInt(rango1[n])
+            ]);
+          }
+
+          funcionesRango2 = [];
+          for (n = 0; n < rango2.length; n++) {
+            funcionesRango2.push([
+              parseInt(rango2[n])
+            ]);
+          }
+
+          funcionesRango3 = [];
+          for (n = 0; n < rango3.length; n++) {
+            funcionesRango3.push([
+              parseInt(rango3[n])
+            ]);
+          }
+
+          funcionesRango4 = [];
+          for (n = 0; n < rango4.length; n++) {
+            funcionesRango4.push([
+              parseInt(rango4[n])
+            ]);
+          }
+
+          funcionesRango5 = [];
+          for (n = 0; n < rango5.length; n++) {
+            funcionesRango5.push([
+              parseInt(rango5[n])
+            ]);
+          }
+
+          $('#nameEntrevistados').text(Highcharts.numberFormat(totalEntrevistados, 0, ',', '.') + ' %');
+          $('#nameHombres').text(Highcharts.numberFormat(pHombres, 0, ',', '.') + ' %');
+          $('#nameMujer').text(Highcharts.numberFormat(pMujeres, 0, ',', '.') + ' %');
+          $('#nameOtros').text(Highcharts.numberFormat(pOtros, 0, ',', '.') + ' %');
+          $('#cardProvincia').text(' Entrevistados en el municipio ' + municipio);
+          $('#cardGenero').text(' Grupos de edades y género en ' + municipio);
+          $('#cardGrado').text(' Grado de Independencia en ' + municipio);
+          $('#cardFuncion').text(' Grupos de edades y función afectada en ' + municipio);
+
+          graficoTotalEntrevistadosEdadGenero();
+          graficoTotalEntrevistadosGrado();
+          graficoTotalEntrevistadosFuncionGenero();
+
+        });
+      }
+
+    });
+  </script>
+{% endblock %}
+
+

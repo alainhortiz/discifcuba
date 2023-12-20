@@ -1,0 +1,461 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-dark d-inline-block mb-0">Trazas del sistema</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Trazas</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-xl-2">
+                <div class="card text-center">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="text-uppercase ls-1 mb-1">Acciones</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <button type="button" class="btn btn-info" id="btnAcceso">
+                                {% for accion in acciones if accion.accion == 'Acceso'%}
+                                    Acceso al sistema<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Acceso al sistema<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-success" id="btnResetear">
+                                {% for accion in acciones if accion.accion == 'Resetear'%}
+                                    Resetear password<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Resetear password<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-danger" id="btnInsertar">
+                                {% for accion in acciones if accion.accion == 'Insertar'%}
+                                    Insertar encuesta<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Insertar encuesta<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-warning" id="btnModificar">
+                                {% for accion in acciones if accion.accion == 'Modificar'%}
+                                    Modificar encuesta<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Modificar encuesta<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-secondary" id="btnAprobar">
+                                {% for accion in acciones if accion.accion == 'Aprobar'%}
+                                    Aprobar encuesta<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Aprobar encuesta<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-primary" id="btnEliminar">
+                                {% for accion in acciones if accion.accion == 'Eliminar'%}
+                                    Eliminar encuesta<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Eliminar encuesta<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 5px">
+                            <button type="button" class="btn btn-default" id="btnNotificar">
+                                {% for accion in acciones if accion.accion == 'Notificar'%}
+                                    Notificar al supervisor<span class="badge badge-default">{{ accion.cantidad }}</span>
+                                {% else %}
+                                    Notificar al supervisor<span class="badge badge-default">0</span>
+                                {% endfor %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-10">
+                <div class="card">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="text-uppercase text-muted ls-1 mb-1">Gráfica</h6>
+                                <h5 class="h3 mb-0" id="cardUsuario"></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Chart -->
+                        <div class="chart" id="graficoUsuario">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="dataTrazas">
+                            <thead style="background: #d93f4f;color: white">
+                            <tr>
+                                <th scope="col" class="text-center">Módulos</th>
+                                <th scope="col" class="text-center">Acción</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col" class="text-center">Fecha</th>
+                                <th scope="col">Descripción</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por módulo" id="buscador_modulos"
+                                               name="buscador_modulos">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por acción" id="buscador_accion"
+                                               name="buscador_accion">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por usuario" id="buscador_usuario"
+                                               name="buscador_usuario">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por fecha" id="buscador_fecha"
+                                               name="buscador_fecha">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                        <input type="text" class="form-control"
+                                               placeholder="Buscar por descripción" id="buscador_descripcion"
+                                               name="buscador_descripcion">
+                                    </div>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/plugins/highstock/code/highstock.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            //Declaraciones
+            let table = $('#dataTrazas').DataTable({
+                dom: 'B<"float-left"i><"float-right"f>t<"float-left"l><"float-right"p><"clearfix">',
+                responsive: false,
+                order: [[ 0, "desc" ]],
+                processing: true,
+                serverSide: true,
+                ajax: "dataTableTrazasAjax",
+                columnDefs: [
+                    { "name": "modulo", "targets": 0 },
+                    { "name": "accion", "targets": 1 },
+                    { "name": "usuario", "targets": 2 },
+                    { "name": "fecha", "targets": 3 },
+                    { "name": "descripcion", "targets": 4 },
+                    { "className": "dt-center", "targets": [ 0, 1, 3 ] },
+                ],
+                "initComplete": function () {
+                    this.api().columns().every( function () {
+                        var that = this;
+
+                        $( 'input', this.footer() ).on( 'keyup change', function () {
+                            if ( that.search() !== this.value ) {
+                                that
+                                    .search( this.value )
+                                    .draw();
+                            }
+                        });
+                    })
+                },
+                searchDelay: 1000,
+                "lengthMenu": [[8], [8]]
+            });
+            let totalAcciones = [];
+            let titulo;
+
+            {% for graficoAccion in acciones %}
+                totalAcciones.push({
+                    name: '{{ graficoAccion['accion'] }}',
+                    y: parseInt('{{ graficoAccion['cantidad'] }}')
+                });
+            {% endfor %}
+
+            function graficoTotalAcciones() {
+                let valorMax = totalAcciones.length - 1;
+                let valorScrollbar = false;
+                if (totalAcciones.length > 6) {
+                    valorMax = 5;
+                    valorScrollbar = true;
+                }
+                Highcharts.chart('graficoUsuario', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: valorScrollbar,
+                        liveRedraw: true,
+                        step: 1
+                    },
+                    xAxis: {
+                        type: 'category',
+                        min: 0,
+                        max: valorMax,
+                        useHTML: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Cantidad',
+                            useHTML: true
+                        }
+
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            getExtremesFromAll: true,
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    return Highcharts.numberFormat(this.y, 0, ',', '.');
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' total ' + '<b>{point.y:,.0f}</b>'
+                    },
+
+                    "series": [
+                        {
+                            "name": "Usuarios",
+                            "colorByPoint": true,
+                            "data": totalAcciones
+                        }
+                    ],
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 800
+                            },
+                            chartOptions: {
+                                scrollbar: {
+                                    enabled: true
+                                },
+                                xAxis: {
+                                    min: 0,
+                                    max: 1,
+                                    useHTML: true
+                                }
+                            }
+                        }]
+                    }
+                });
+            }
+
+            $('#btnAcceso').on("click", function () {
+                obtenerUsuarios('Acceso');
+            });
+
+            $('#btnInsertar').on("click", function () {
+                obtenerUsuarios('Insertar');
+            });
+
+            $('#btnModificar').on("click", function () {
+                obtenerUsuarios('Modificar');
+            });
+
+            $('#btnAprobar').on("click", function () {
+                obtenerUsuarios('Aprobar');
+            });
+
+            $('#btnEliminar').on("click", function () {
+                obtenerUsuarios('Eliminar');
+            });
+
+            $('#btnResetear').on("click", function () {
+                obtenerUsuarios('Resetear');
+            });
+
+            $('#btnNotificar').on("click", function () {
+                obtenerUsuarios('Notificar');
+            });
+
+            function obtenerUsuarios(accion) {
+                let existe = 0;
+                let n;
+                switch(accion) {
+                    case 'Acceso':
+                        {% for accion in acciones if accion.accion == 'Acceso' %}
+                            existe = 1;
+                            titulo = 'Usuarios que accedieron al sistema';
+                        {% endfor %}
+                        break;
+                    case 'Insertar':
+                        {% for accion in acciones if accion.accion == 'Insertar' %}
+                            existe = 1;
+                            titulo = 'Usuarios que insertaron encuestas';
+                        {% endfor %}
+                            break;
+                    case 'Modificar':
+                        {% for accion in acciones if accion.accion == 'Modificar' %}
+                            existe = 1;
+                            titulo = 'Usuarios que modificaron encuestas';
+                        {% endfor %}
+                            break;
+                    case 'Aprobar':
+                        {% for accion in acciones if accion.accion == 'Aprobar' %}
+                            existe = 1;
+                            titulo = 'Usuarios que aprobaron encuestas';
+                        {% endfor %}
+                            break;
+                    case 'Eliminar':
+                        {% for accion in acciones if accion.accion == 'Eliminar' %}
+                            existe = 1;
+                            titulo = 'Usuarios que eliminaron encuestas';
+                        {% endfor %}
+                            break;
+                    case 'Resetear':
+                        {% for accion in acciones if accion.accion == 'Resetear' %}
+                            existe = 1;
+                            titulo = 'Usuarios que resetearon password';
+                        {% endfor %}
+                            break;
+                    case 'Notificar':
+                        {% for accion in acciones if accion.accion == 'Notificar' %}
+                            existe = 1;
+                            titulo = 'Usuarios notificados en el sistema';
+                        {% endfor %}
+                        break;
+                }
+
+                if (existe === 1)
+                {
+
+                    //mostrar si existe el grafico mensual
+
+                    $(".preload").removeClass('hidden');
+
+                    let mat_datos = {
+                        accion: accion
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: '{{ path("accionUsuario") }}',
+                        data: mat_datos
+                    }).done(function (data) {
+
+                        $(".preload").addClass('hidden');
+                        let obj = JSON.parse(data);
+
+                        totalAcciones = [];
+                        for (n = 0; n < obj.length; n++) {
+                            totalAcciones.push({
+                                name: obj[n]['usuario'],
+                                y: parseFloat(obj[n]['cantidad'])
+                            });
+                        }
+
+                        $('#cardUsuario').text(titulo);
+                        graficoTotalAcciones();
+                    });
+                }
+            }
+
+        });
+
+    </script>
+{% endblock %}
+

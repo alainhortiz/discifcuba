@@ -1,0 +1,1873 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/plugins/multiselect/css/multi-select.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                        <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('gestionarEncuestas') }}">Encuestas</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Nueva Encuesta CI: {{ ci }} </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <form>
+            <div class="row justify-content-center">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <!-- Tabs with icons -->
+                    <div class="nav-wrapper">
+                        <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text"
+                            role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-1" role="tab"
+                                   aria-controls="tabs-icons-text-1" aria-selected="true"><i
+                                            class="ni ni-single-02 mr-2"></i>Datos Generales</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-2" role="tab"
+                                   aria-controls="tabs-icons-text-2" aria-selected="false"><i
+                                            class="ni ni-single-02 mr-2"></i>Diagnóstico</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-3" role="tab"
+                                   aria-controls="tabs-icons-text-3" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D1</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-4" role="tab"
+                                   aria-controls="tabs-icons-text-4" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D2</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-5-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-5" role="tab"
+                                   aria-controls="tabs-icons-text-5" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D3</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-6-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-6" role="tab"
+                                   aria-controls="tabs-icons-text-6" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D4</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-7-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-7" role="tab"
+                                   aria-controls="tabs-icons-text-7" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D5</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-8-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-8" role="tab"
+                                   aria-controls="tabs-icons-text-8" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D6</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-9-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-9" role="tab"
+                                   aria-controls="tabs-icons-text-9" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D7</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-10-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-10" role="tab"
+                                   aria-controls="tabs-icons-text-10" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D8</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-11-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-11" role="tab"
+                                   aria-controls="tabs-icons-text-11" aria-selected="false"><i
+                                            class="fa fa-question mr-2"></i>D9</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-11-tab"
+                                   data-toggle="tab" href="#tabs-icons-text-12" role="tab"
+                                   aria-controls="tabs-icons-text-12" aria-selected="false"><i
+                                            class="fa fa-users mr-2"></i>Entrevistadores</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-body" style="background: #FFFFFF">
+                            <div class="tab-content" id="myTabContent">
+                                {# Datos generales #}
+                                <div class="tab-pane fade show active" id="tabs-icons-text-1"
+                                     role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-md-12 col-12">
+                                                    <div class="form-group">
+                                                        <h2 class="card-title text-dark font-weight-bold mb-4">DATOS
+                                                            GENERALES</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3 col-12">
+                                                    <div class="form-group">
+                                                     <span class="mb-2">Edad cumplida: <span
+                                                                 class="text-dark font-weight-bold" id="edad"
+                                                                 name="edad"></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 col-12">
+                                                    <div class="form-group">
+                                                    <span class="mb-2">Fecha de
+                                                                        nacimiento: <span
+                                                                class="text-dark font-weight-bold" id="fechaNacimiento"
+                                                                name="fechaNacimiento"></span></span>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <div class="form-group">
+                                                    <span class="mb-2">Sexo: <span
+                                                                class="text-dark font-weight-bold" id="sexo"
+                                                                name="sexo"></span></span>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="fechaValoracion">Fecha de
+                                                        valoración</label><input type="date"
+                                                                                 class="form-control"
+                                                                                 placeholder="Seleccione"
+                                                                                 min="2020-01-01"
+                                                                                 step="1"
+                                                                                 id="fechaValoracion"
+                                                                                 name="fechaValoracion">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="provinciaPoliclinico">Provincia</label>
+                                                    <select
+                                                            class="form-control" id="provinciaPoliclinico"
+                                                            name="provinciaPoliclinico">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for provincia in  provincias %}
+                                                            <option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="municipioPoliclinico">Municipio</label>
+                                                    <select
+                                                            class="form-control" id="municipioPoliclinico"
+                                                            name="municipioPoliclinico" disabled>
+                                                        <option id="inicioMunicipioPol" value="0">Seleccione un
+                                                            municipio
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="policlinico">Policlínico</label>
+                                                    <select
+                                                            class="form-control" id="policlinico"
+                                                            name="policlinico" disabled>
+                                                        <option id="inicioPol" value="0">Seleccione el policlínico
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="nombre">Nombre</label>
+                                                    {% if persona %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="nombre"
+                                                               value="{{ persona.nombre }}"
+                                                               name="nombre" onkeypress="return soloLetras(event)">
+                                                    {% else %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="nombre"
+                                                               name="nombre" onkeypress="return soloLetras(event)">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="primerApellido">Primer Apellido</label>
+                                                    {% if persona %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="primerApellido"
+                                                               name="primerApellido"
+                                                               value="{{ persona.primerApellido }}"
+                                                               onkeypress="return soloLetras(event)">
+                                                    {% else %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="primerApellido"
+                                                               name="primerApellido"
+                                                               onkeypress="return soloLetras(event)">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="segundoApellido">Segundo Apellido</label>
+                                                    {% if persona %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="segundoApellido"
+                                                               name="segundoApellido"
+                                                               value="{{ persona.segundoApellido }}"
+                                                               onkeypress="return soloLetras(event)">
+                                                    {% else %}
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Teclee el nombre" id="segundoApellido"
+                                                               name="segundoApellido"
+                                                               onkeypress="return soloLetras(event)">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="genero">Género</label>
+                                                    <select
+                                                            class="form-control" id="genero"
+                                                            name="genero">
+                                                        <option value="0">Seleccione ...</option>
+                                                        <option value="Hombre">Hombre</option>
+                                                        <option value="Mujer">Mujer</option>
+                                                        <option value="Otro">Otro</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="estadoCivil">Estado civil</label>
+                                                    <select
+                                                            class="form-control" id="estadoCivil"
+                                                            name="estadoCivil">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for estado in  estadosCiviles %}
+                                                            <option value="{{ estado.id }}">{{ estado.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="provinciaResidencia">Provincia de residencia</label>
+                                                    <select
+                                                            class="form-control" id="provinciaResidencia"
+                                                            name="provinciaResidencia">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for provincia in  provincias %}
+                                                            <option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="municipioResidencia">Municipio de residencia</label>
+                                                    <select
+                                                            class="form-control" id="municipioResidencia"
+                                                            name="municipioResidencia" disabled>
+                                                        <option id="inicioMunResid" value="0">Seleccione el municipio
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-12 pr-1">
+                                                <div class="form-group">
+                                                    <label class="control-label "
+                                                           for="multi-empleos"><strong>Empleo(s) actual(es)
+                                                            :</strong></label>
+                                                    <select multiple="multiple" id="multi-empleos"
+                                                            name="multi-empleos"
+                                                            class="form-control">
+                                                        {% for empleo in empleos %}
+                                                            <option value={{ empleo.id }}>{{ empleo.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# Diagnóstico #}
+                                <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-2-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">DIAGNÓSTICO</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-grados"><strong>Grado de
+                                                                independencia:</strong></label>
+                                                        <select multiple="multiple" id="multi-grados"
+                                                                name="multi-grados"
+                                                                class="form-control">
+                                                            {% for grado in grados %}
+                                                                <option value={{ grado.id }}>{{ grado.nombre }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-factores"><strong>Factores de
+                                                                riesgo:</strong></label>
+                                                        <select multiple="multiple" id="multi-factores"
+                                                                name="multi-factores"
+                                                                class="form-control">
+                                                            {% for factor in factores %}
+                                                                <option value={{ factor.id }}>{{ factor.nombre }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-diagnosticos"><strong>Diagnóstico médico de
+                                                                las
+                                                                principales condiciones de salud:</strong></label>
+                                                        <select multiple="multiple" id="multi-diagnosticos"
+                                                                name="multi-diagnosticos"
+                                                                class="form-control">
+                                                            {% for diagnostico in diagnosticos %}
+                                                                <option value={{ diagnostico.id }}>{{ diagnostico.nombre }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-sistemas"><strong>Sistemas
+                                                                afectados:</strong></label>
+                                                        <select multiple="multiple" id="multi-sistemas"
+                                                                name="multi-sistemas"
+                                                                class="form-control">
+                                                            {% for sistema in sistemas %}
+                                                                <option value={{ sistema.id }}>{{ sistema.nombre }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-funciones"><strong>Funciones
+                                                                afectadas:</strong></label>
+                                                        <select multiple="multiple" id="multi-funciones"
+                                                                name="multi-funciones"
+                                                                class="form-control">
+                                                            {% for funcion in funciones %}
+                                                                <option value={{ funcion.id }}>{{ funcion.nombre }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d1 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-3-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D1. APRENDIZAJE Y
+                                                APLICACIÓN DEL
+                                                CONOCIMIENTO</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD1">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% set no = 0 %}
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd1' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD1{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD1{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD1{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD1{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD1{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD1{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD1{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD1{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD1{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD1{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD1{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD1{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d2 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-4" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-4-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D2. TAREAS Y DEMANDAS
+                                                GENERALES</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD2">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd2' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD2{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD2{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD2{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD2{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD2{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD2{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD2{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD2{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD2{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD2{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD2{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD2{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d3 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-5" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-5-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D3. CONVERSACIÓN Y
+                                                UTILIZACIÓN DE
+                                                APARATOS Y TÉCNICAS DE COMUNICACIÓN</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD3">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd3' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD3{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD3{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD3{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD3{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD3{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD3{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD3{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD3{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD3{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD3{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD3{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD3{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d4 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-6" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-6-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D4. MOVILIDAD</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD4">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd4' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD4{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD4{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD4{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD4{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD4{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD4{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD4{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD4{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD4{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD4{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD4{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD4{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d5 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-7" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-7-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D5. AUTOCUIDADO</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD5">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd5' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD5{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD5{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD5{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD5{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD5{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD5{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD5{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD5{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD5{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD5{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD5{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD5{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d6 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-8" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-8-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D6. TAREAS DEL
+                                                HOGAR</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD6">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd6' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD6{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD6{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD6{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD6{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD6{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD6{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD6{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD6{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD6{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD6{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px"  type="radio"
+                                                                           name="radioD6{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD6{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d7 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-9" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-9-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D7. INTERACCIONES Y
+                                                RELACIONES
+                                                INTERPERSONALES</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD7">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd7' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD7{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD7{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD7{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD7{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD7{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD7{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD7{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD7{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD7{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD7{{ pregunta.id }}">Ninguna </label>
+
+                                                                    <input style="margin-left: 20px"  type="radio"
+                                                                           name="radioD7{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD7{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d8 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-10" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-10-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D8. ÁREAS PRINCIPALES
+                                                DE LA VIDA. TRABAJO
+                                                Y EMPLEO</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD8">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd8' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD8{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD8{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD8{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD8{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD8{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD8{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD8{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD8{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD8{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD8{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD8{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD8{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# d9 #}
+                                <div class="tab-pane fade" id="tabs-icons-text-11" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-11-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">D9. VIDA
+                                                COMUNITARIA</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title text-gray font-weight-bold mb-4">¿En los últimos 30
+                                                días
+                                                cuanta dificultad ha tenido (diga el nombre) para</h3>
+                                            <!-- Light table -->
+                                            <div class="table-responsive">
+                                                <table class="table align-items-center table-flush" id="dataD9">
+                                                    <thead style="background: #272934;color: white">
+                                                    <tr>
+                                                        <th scope="col" class="hidden">id</th>
+                                                        <th scope="col" class="text-center">No.</th>
+                                                        <th scope="col">Pregunta</th>
+                                                        <th scope="col" class="text-center">Opciones de respuesta</th>
+                                                        <th scope="col" class="text-center">Código CIF-IA-IA</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="list">
+                                                    {% for pregunta in preguntas if pregunta.tipoDominio.codigo == 'd9' %}
+                                                        {% set no = no + 1 %}
+                                                        <tr data-id="{{ pregunta.id }}">
+                                                            <td class="hidden">{{ pregunta.id }}</td>
+                                                            <td class="text-center">{{ no }}</td>
+                                                            <td>{{ pregunta.nombre }}</td>
+                                                            <div class="form-group">
+                                                                <td class="text-center">
+                                                                    <input type="radio"
+                                                                           name="radioD9{{ pregunta.id }}"
+                                                                           value="0">
+                                                                    <label for="radioD9{{ pregunta.id }}">No lo puede
+                                                                        hacer</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD9{{ pregunta.id }}"
+                                                                           value="1">
+                                                                    <label for="radioD9{{ pregunta.id }}">Severa</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD9{{ pregunta.id }}" value="2">
+                                                                    <label for="radioD9{{ pregunta.id }}">Moderada</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD9{{ pregunta.id }}" value="3">
+                                                                    <label for="radioD9{{ pregunta.id }}">Leve</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD9{{ pregunta.id }}" value="4">
+                                                                    <label for="radioD9{{ pregunta.id }}">Ninguna</label>
+
+                                                                    <input style="margin-left: 20px" type="radio"
+                                                                           name="radioD9{{ pregunta.id }}"
+                                                                           value="-1" checked>
+                                                                    <label for="radioD9{{ pregunta.id }}">No
+                                                                        Aplica</label>
+                                                                </td>
+                                                            </div>
+                                                            <td class="text-center">
+                                                                <strong>{{ pregunta.codigo }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {# Entrevistadores #}
+                                <div class="tab-pane fade" id="tabs-icons-text-12" role="tabpanel"
+                                     aria-labelledby="tabs-icons-text-12-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title text-dark font-weight-bold mb-4">ENTREVISTADORES</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-12 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label "
+                                                               for="multi-funciones"><strong>Entrevistadores:</strong></label>
+                                                        <select multiple="multiple" id="multi-entrevistadores"
+                                                                name="multi-entrevistadores"
+                                                                class="form-control">
+                                                            {% for entrevistador in entrevistadores if entrevistador.id != app.user.id %}
+                                                                {% if not ('ROLE_SUPERUSUARIO' in entrevistador.getUsuarioRoles()) %}
+                                                                    <option value={{ entrevistador.id }}>{{ entrevistador.nombresCompletos() }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {# guardar #}
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card card-user">
+                            <div class="card-body">
+                                <form>
+                                    <div class="row justify-content-center">
+                                        <div class="row">
+                                            <div class="update ml-auto mr-auto">
+                                                <button type="button" class="btn btn-round text-white"
+                                                        style="background-color: #303132" id="btnGuardar"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title="Guardar el proyecto">Aceptar
+                                                </button>
+                                                <button type="button" class="btn btn-link text-dark btn-round"
+                                                        id="btnCancelar"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title="Salir">Cancelar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/plugins/multiselect/js/jquery.multi-select.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/quicksearch/src/jquery.quicksearch.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+
+            //Roles y permisos de la page
+            {
+                (function () {
+                    {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_ENTREVISTADOR")) %}
+                    window.location.href = "{{ path('login') }}";
+                    {% endif %}
+                })();
+            }
+
+            //Declaraciones
+            {
+                //Componentes
+                $('#multi-empleos, #multi-grados, #multi-factores, #multi-diagnosticos, #multi-sistemas, #multi-funciones').multiSelect();
+
+                $('#multi-entrevistadores').multiSelect({
+                    selectableHeader: "<input type='text' class='search-input input-lg' autocomplete='off' placeholder='Buscar...'>",
+                    selectionHeader: "<input type='text' class='search-input input-lg' autocomplete='off' placeholder='Buscar...'>",
+                    afterInit: function (ms) {
+                        var that = this,
+                            $selectableSearch = that.$selectableUl.prev(),
+                            $selectionSearch = that.$selectionUl.prev(),
+                            selectableSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selectable:not(.ms-selected)',
+                            selectionSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selection.ms-selected';
+
+                        that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                            .on('keydown', function (e) {
+                                if (e.which === 40) {
+                                    that.$selectableUl.focus();
+                                    return false;
+                                }
+                            });
+
+                        that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                            .on('keydown', function (e) {
+                                if (e.which == 40) {
+                                    that.$selectionUl.focus();
+                                    return false;
+                                }
+                            });
+                    },
+                    afterSelect: function () {
+                        this.qs1.cache();
+                        this.qs2.cache();
+                    },
+                    afterDeselect: function () {
+                        this.qs1.cache();
+                        this.qs2.cache();
+                    }
+                });
+
+                var tableD1 = $('#dataD1').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD2 = $('#dataD2').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD3 = $('#dataD3').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD4 = $('#dataD4').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD5 = $('#dataD5').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD6 = $('#dataD6').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD7 = $('#dataD7').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD8 = $('#dataD8').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+
+                var tableD9 = $('#dataD9').DataTable({
+                    "lengthChange": false,
+                    "lengthMenu": [[15], [15]],
+                    "searching": false
+                });
+            }
+
+            //Calcular la edad, fecha de nacimiento y el sexo
+            {
+                var carnet = '{{ ci }}';
+
+                if (carnet !== '') {
+                    if (getIsCI(carnet)) {
+                        let edad = getEdad(carnet);
+                        if (edad < 18) {
+                            alertify.alert('<strong>La persona es menor de edad, no se le puede aplicar la encuesta.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar')
+                                .set('onok', function () {
+                                    window.location.href = "{{ path('gestionarEncuestas') }}";
+                                });
+                        } else {
+                            $("#fechaNacimiento").text(getNacimiento(carnet));
+                            $("#edad").text(edad);
+                            if (getParImpar(carnet)) {
+                                $("#sexo").text('Masculino');
+                            } else {
+                                $("#sexo").text('Femenino');
+                            }
+                        }
+                    }
+                }
+
+                function getFechaNacimiento(expresionString) {
+                    let year = expresionString.substring(0, 2)
+                    let mes = expresionString.substring(2, 4)
+                    let dia = expresionString.substring(4, 6)
+                    return new Date(parseInt(year) + ',' + parseInt(mes) + ',' + parseInt(dia))
+                }
+
+                function getNacimiento(expresionString) {
+                    let year = expresionString.substring(0, 2)
+                    let mes = expresionString.substring(2, 4)
+                    let dia = expresionString.substring(4, 6)
+                    let fecha = new Date(parseInt(year) + ',' + parseInt(mes) + ',' + parseInt(dia))
+                    return dia + '-' + mes + '-' + fecha.getFullYear()
+                }
+
+                function getEdad(expresionString) {
+                    let hoy = new Date()
+                    let fechaNacimiento = getFechaNacimiento(expresionString);
+                    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear()
+                    let diferenciaMeses = hoy.getMonth() - fechaNacimiento.getMonth()
+                    if (
+                        diferenciaMeses < 0 ||
+                        (diferenciaMeses === 0 && hoy.getDate() < fechaNacimiento.getDate())
+                    ) {
+                        edad--
+                    }
+                    return edad
+                }
+
+                function getParImpar(numero) {
+                    let par = false
+                    let n = numero.substr(numero.length - 2, 1)
+                    if (n % 2 === 0) {
+                        par = true
+                    }
+                    return par
+                }
+
+                function getIsCI(expresionString) {
+                    let result = false
+                    let ExpRegSoloNumeros = "^[0-9]+$";
+                    if (expresionString.length === 11) {
+                        if (expresionString.match(ExpRegSoloNumeros) != null) {
+                            result = true
+                        }
+                    }
+                    return result
+                }
+
+            }
+
+            //Relacionar selects
+            {
+                $('#provinciaPoliclinico').on('change', function () {
+                    let html = '';
+                    let provincia = $('#provinciaPoliclinico').val();
+                    if (provincia == '0') {
+                        $("#municipioPoliclinico").prop('disabled', true);
+                        $("option").remove('.inicioMunicipioPol');
+                    } else {
+                        $("#municipioPoliclinico").prop('disabled', false);
+                        $("option").remove('.inicioMunicipioPol');
+                        $("#inicioMunicipioPol").after('<option class="inicioMunicipioPol"></option>');
+
+                        {% for municipio in  municipios %}
+                        var idProvincia = '{{ municipio.Provincia.id }}';
+
+                        if (idProvincia == provincia) {
+                            var id = {{ municipio.id }};
+                            var name = '{{ municipio.nombre }}';
+                            html += '<option class="inicioMunicipioPol" value="' + id + '">' + name + '</option>';
+
+                        }
+                        {% endfor %}
+                        $(".inicioMunicipioPol").replaceWith(html);
+                    }
+                });
+
+                $('#municipioPoliclinico').on('change', function () {
+                    let html = '';
+                    let municipio = $('#municipioPoliclinico').val();
+                    if (municipio == '0') {
+                        $("#policlinico").prop('disabled', true);
+                        $("option").remove('.inicioPol');
+                    } else {
+                        $("#policlinico").prop('disabled', false);
+                        $("option").remove('.inicioPol');
+                        $("#inicioPol").after('<option class="inicioPol"></option>');
+
+                        {% for policlinico in  policlinicos %}
+                        var idMunicipio = '{{ policlinico.municipio.id }}';
+
+                        if (idMunicipio == municipio) {
+                            var id = {{ policlinico.id }};
+                            var name = '{{ policlinico.nombre }}';
+                            html += '<option class="inicioPol" value="' + id + '">' + name + '</option>';
+
+                        }
+                        {% endfor %}
+                        $(".inicioPol").replaceWith(html);
+                    }
+                });
+
+                $('#provinciaResidencia').on('change', function () {
+                    let html = '';
+                    let provincia = $('#provinciaResidencia').val();
+                    if (provincia == '0') {
+                        $("#municipioResidencia").prop('disabled', true);
+                        $("option").remove('.inicioMunResid');
+                    } else {
+                        $("#municipioResidencia").prop('disabled', false);
+                        $("option").remove('.inicioMunResid');
+                        $("#inicioMunResid").after('<option class="inicioMunResid"></option>');
+
+                        {% for municipio in  municipios %}
+                        var idProvincia = '{{ municipio.Provincia.id }}';
+
+                        if (idProvincia == provincia) {
+                            var id = {{ municipio.id }};
+                            var name = '{{ municipio.nombre }}';
+                            html += '<option class="inicioMunResid" value="' + id + '">' + name + '</option>';
+
+                        }
+                        {% endfor %}
+                        $(".inicioMunResid").replaceWith(html);
+                    }
+                });
+            }
+
+            //Acciones de persistencia
+            {
+                //--------- abandonar el formulario -----------------
+                $('#btnCancelar').on('click', function () {
+                    window.location.href = "{{ path('gestionarEncuestas') }}";
+                });
+
+                $('#btnGuardar').on('click', function () {
+
+                    //Validaciones de datos generales
+                    {
+                        var hoy = '{{ "now"|date('Y-m-d') }}';
+
+                        if ($("#edad").text() === '') {
+                            alertify.alert('<strong>La edad es obligatoria, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#fechaNacimiento").text() == '') {
+                            alertify.alert('<strong>La fecha de nacimeinto es obligatoria, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#sexo").text() == '') {
+                            alertify.alert('<strong>El sexo es obligatorio es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#fechaValoracion").val() == '') {
+                            alertify.alert('<strong>Debe seleccionar la fecha de valoración de la encuesta.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#fechaValoracion").val() > hoy) {
+                            alertify.alert('<strong>Error: la fecha de valoración no puede ser mayor que la fecha actual.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#policlinico").val() === '0' || $("#policlinico").val() === '') {
+                            alertify.alert('<strong>El policlínico es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#nombre").val() === '') {
+                            alertify.alert('<strong>El nombre es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#primerApellido").val() === '') {
+                            alertify.alert('<strong>El primer apellido es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#segundoApellido").val() === '') {
+                            alertify.alert('<strong>El segundo apellido es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+
+                        if ($("#provinciaResidencia").val() === '0') {
+                            alertify.alert('<strong>La provincia de residencia es obligatoria, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#municipioResidencia").val() === '0' || $("#municipioResidencia").val() === '') {
+                            alertify.alert('<strong>El municipio de residencia es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#genero").val() === '0') {
+                            alertify.alert('<strong>El género es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if ($("#estadoCivil").val() === '0') {
+                            alertify.alert('<strong>El estado civil es obligatorio, no puede quedar en blanco.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if (!($('#ms-multi-empleos li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos un empleo.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                    }
+
+                    //Validaciones del diagnóstico
+                    {
+                        if (!($('#ms-multi-grados li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos un grado de independencia.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if (!($('#ms-multi-factores li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos un factor de riesgo.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if (!($('#ms-multi-diagnosticos li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos un diagnóstico médico.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if (!($('#ms-multi-sistemas li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos un sistema afectado.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                        if (!($('#ms-multi-funciones li.ms-elem-selectable ').hasClass('ms-selected'))) {
+                            alertify.alert('<strong>Debe seleccionar al menos una función afectada.</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                                .set('label', 'Aceptar');
+                            return false;
+                        }
+                    }
+
+                    //Arreglo de preguntas
+                    {
+                        var preguntasD1 = [];
+                        if (tableD1.rows().count() !== 0) {
+                            $("#dataD1 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD1" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD1.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD2 = [];
+                        if (tableD2.rows().count() !== 0) {
+                            $("#dataD2 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD2" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD2.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD3 = [];
+                        if (tableD3.rows().count() !== 0) {
+                            $("#dataD3 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD3" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD3.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD4 = [];
+                        if (tableD4.rows().count() !== 0) {
+                            $("#dataD4 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD4" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD4.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD5 = [];
+                        if (tableD5.rows().count() !== 0) {
+                            $("#dataD5 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD5" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD5.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD6 = [];
+                        if (tableD6.rows().count() !== 0) {
+                            $("#dataD6 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD6" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD6.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD7 = [];
+                        if (tableD7.rows().count() !== 0) {
+                            $("#dataD7 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD7" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD7.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD8 = [];
+                        if (tableD8.rows().count() !== 0) {
+                            $("#dataD8 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD8" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD8.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+
+                        var preguntasD9 = [];
+                        if (tableD9.rows().count() !== 0) {
+                            $("#dataD9 tbody tr").each(function (index) {
+                                let filaId, filaCodigo, filaResultado;
+                                $(this).children("td").each(function (index2) {
+                                    switch (index2) {
+                                        case 0:
+                                            filaId = $(this).text();
+                                            break;
+                                        case 3:
+                                            filaResultado = $("input:radio[name=radioD9" + filaId + "]:checked").val();
+                                            break;
+                                        case 4:
+                                            filaCodigo = $(this).text();
+                                            break;
+                                    }
+                                });
+                                preguntasD9.push({
+                                    idPregunta: parseInt(filaId),
+                                    codigo: filaCodigo,
+                                    resultado: parseInt(filaResultado)
+                                });
+                            });
+                        }
+                    }
+
+                    $(".preload").removeClass('hidden');
+
+                    var mat_datos = {
+                        ci: carnet,
+                        fechaValoracion: $("#fechaValoracion").val(),
+                        policlinico: $("#policlinico").val(),
+                        nombre: $("#nombre").val(),
+                        primerApellido: $("#primerApellido").val(),
+                        segundoApellido: $("#segundoApellido").val(),
+                        fechaNacimiento: $("#fechaNacimiento").text(),
+                        municipioResidencia: $("#municipioResidencia").val(),
+                        edad: $("#edad").text(),
+                        sexo: $("#sexo").text(),
+                        genero: $("#genero").val(),
+                        estadoCivil: $("#estadoCivil").val(),
+                        empleos: $("#multi-empleos").val(),
+                        entrevistadores: $("#multi-entrevistadores").val(),
+                        grados: $("#multi-grados").val(),
+                        factores: $("#multi-factores").val(),
+                        diagnosticos: $("#multi-diagnosticos").val(),
+                        sistemas: $("#multi-sistemas").val(),
+                        funciones: $("#multi-funciones").val(),
+                        d1: preguntasD1,
+                        d2: preguntasD2,
+                        d3: preguntasD3,
+                        d4: preguntasD4,
+                        d5: preguntasD5,
+                        d6: preguntasD6,
+                        d7: preguntasD7,
+                        d8: preguntasD8,
+                        d9: preguntasD9
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        dataType: "html",
+                        url: '{{ path("insertEncuesta") }}',
+                        data: mat_datos
+                    }).done(function (data) {
+
+                        $(".preload").addClass('hidden');
+                        if (data == 'ok') {
+
+                            alertify.alert('<strong>La encuesta ha sido insertada correctamente</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                                .set('label', 'Aceptar')
+                                .set('onok', function () {
+                                    window.location.href = "{{ path('gestionarEncuestas') }}";
+                                });
+                        } else {
+                            alertify.alert('<strong>' + data + '</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                                .set('label', 'Aceptar')
+                        }
+                    });
+
+                });
+            }
+
+        });
+    </script>
+{% endblock %}
+

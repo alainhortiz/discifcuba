@@ -1,0 +1,245 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <!-- Alerta -->
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- Header -->
+    <div class="header bg-gradient-red-right pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="{{ path('inicio') }}">Inicio</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Reporte por dominios</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card card-user">
+                    <div class="card-header">
+                        <h2 class="card-title text-dark font-weight-bold mb-4">Reporte por dominios</h2>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="card-body" style="background: #fdfdfd">
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="provinciaPoliclinico">Provincia</label>
+                                                    <select
+                                                            class="form-control" id="provinciaPoliclinico"
+                                                            name="provinciaPoliclinico">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for provincia in  provincias %}
+                                                            <option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="municipioPoliclinico">Municipio</label>
+                                                    <select
+                                                            class="form-control" id="municipioPoliclinico"
+                                                            name="municipioPoliclinico" disabled>
+                                                        <option id="inicioMunicipioPol" value="0">Seleccione un
+                                                            municipio
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="policlinico">Policlínico</label>
+                                                    <select
+                                                            class="form-control" id="policlinico"
+                                                            name="policlinico" disabled>
+                                                        <option id="inicioPol" value="0">Seleccione el policlínico
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="year">Año</label>
+                                                    <input type="number" min="2022" value="{{ "now"|date("Y") }}"
+                                                           class="form-control"
+                                                           id="year"
+                                                           name="year">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12">
+                                                <div class="form-group">
+                                                    <label for="dominio">Dominio</label>
+                                                    <select
+                                                            class="form-control" id="dominio"
+                                                            name="dominio">
+                                                        <option value="0">Seleccione ...</option>
+                                                        {% for dominio in  dominios %}
+                                                            <option value="{{ dominio.id }}">{{ dominio.codigo ~ '-' ~ dominio.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="update ml-auto mr-auto">
+                                        <button type="button" class="btn btn-round text-white"
+                                                style="background-color: #303132" id="btnExportar"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Exportar">Exportar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block footer %}
+            {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+
+            (function () {
+                {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            //Verficar si existe informacion
+            if(parseInt('{{ noExiste }}') === 1) {
+                    alertify.alert('<strong>No existe información.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Información</h4>')
+                        .set('label', 'Aceptar');
+            }
+
+            //Relacionar selects
+            {
+                $('#provinciaPoliclinico').on('change', function () {
+                    let html = '';
+                    let provincia = $('#provinciaPoliclinico').val();
+                    if (provincia == '0') {
+                        $("#municipioPoliclinico").prop('disabled', true);
+                        $("option").remove('.inicioMunicipioPol');
+                    } else {
+                        $("#municipioPoliclinico").prop('disabled', false);
+                        $("option").remove('.inicioMunicipioPol');
+                        $("#inicioMunicipioPol").after('<option class="inicioMunicipioPol"></option>');
+
+                        {% for municipio in  municipios %}
+                        var idProvincia = '{{ municipio.Provincia.id }}';
+
+                        if (idProvincia == provincia) {
+                            var id = {{ municipio.id }};
+                            var name = '{{ municipio.nombre }}';
+                            html += '<option class="inicioMunicipioPol" value="' + id + '">' + name + '</option>';
+
+                        }
+                        {% endfor %}
+                        $(".inicioMunicipioPol").replaceWith(html);
+                    }
+                });
+
+                $('#municipioPoliclinico').on('change', function () {
+                    let html = '';
+                    let municipio = $('#municipioPoliclinico').val();
+                    if (municipio == '0') {
+                        $("#policlinico").prop('disabled', true);
+                        $("option").remove('.inicioPol');
+                    } else {
+                        $("#policlinico").prop('disabled', false);
+                        $("option").remove('.inicioPol');
+                        $("#inicioPol").after('<option class="inicioPol"></option>');
+
+                        {% for policlinico in  policlinicos %}
+                        var idMunicipio = '{{ policlinico.municipio.id }}';
+
+                        if (idMunicipio == municipio) {
+                            var id = {{ policlinico.id }};
+                            var name = '{{ policlinico.nombre }}';
+                            html += '<option class="inicioPol" value="' + id + '">' + name + '</option>';
+
+                        }
+                        {% endfor %}
+                        $(".inicioPol").replaceWith(html);
+                    }
+                });
+            }
+
+            $('#btnExportar').on('click', function () {
+
+                if ($("#policlinico").val() === '0' || $("#policlinico").val() === '') {
+                    alertify.alert('<strong>Seleccione el policlínico.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#year").val() === '') {
+                    alertify.alert('<strong>Teclee el año.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                if ($("#dominio").val() === '0') {
+                    alertify.alert('<strong>Seleccione el dominio.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Advertencia</h4>')
+                        .set('label', 'Aceptar');
+                    return false;
+                }
+
+                $(".preload").removeClass('hidden');
+
+                let enlace = "{{ path('exportarDominio' , {idPoliclinico: 'idPoliclinico' , year: 'year', idDominio: 'idDominio'}) }}";
+                let enlace2 = enlace.replace('idPoliclinico', $("#policlinico").val());
+                let enlace3 = enlace2.replace('year', $("#year").val());
+                let ruta = enlace3.replace('idDominio', $("#dominio").val());
+                window.location.href = ruta;
+
+                $(".preload").addClass('hidden');
+
+            });
+
+        });
+    </script>
+{% endblock %}
+
